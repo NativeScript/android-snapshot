@@ -3,8 +3,6 @@
   "version": "0.0.1",
   "main": "main.js",
   "android": {
-    "v8Flags": "--expose_gc",
-    "heapSnapshot": "true",
-    "heapSnapshotScript": "_embedded_script_.js"
+    "v8Flags": "--expose_gc"
   }
 }

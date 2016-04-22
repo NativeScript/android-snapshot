@@ -2,9 +2,24 @@
   "name": "nativescript-angular-snapshot",
   "version": "0.0.1",
   "license": "Apache-2.0",
+  "dependencies": {
+    "nativescript-hook": "^0.2.1",
+    "shelljs": "^0.6.0"
+  },
+  "scripts": {
+    "preuninstall": "node preuninstall.js",
+    "postinstall": "node postinstall.js"
+  },
   "nativescript": {
     "platforms": {
       "android": "2.0.0"
-    }
+    },
+    "hooks": [
+      {
+        "type": "after-prepare",
+        "script": "hooks/after-prepare-hook.js",
+        "inject": true
+      }
+    ]
   }
 }
