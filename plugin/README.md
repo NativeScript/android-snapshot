@@ -1,5 +1,3 @@
-* TODO: Add modules and angular `.d.ts` files
-
 * TODO: Minify the script before creating the snapshot
 
 

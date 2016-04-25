@@ -33,8 +33,11 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
     shelljs.rm("-f", path.join(platformPluginDirectory, "tns-java-classes.js"));
 
     shelljs.rm("-rf", path.join(platformPluginDirectory, "node_modules"));
+
     shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/shelljs"));
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/tns-core-modules-widgets"));
+
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/angular2"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/nativescript-angular"));
 
     var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules/tns-core-modules"));
     for (var i = 0; i < tnsModulesFolders.length; i++) {
