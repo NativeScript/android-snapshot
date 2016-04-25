@@ -2,6 +2,19 @@ var path = require("path");
 var fs = require("fs");
 var shelljs = require("shelljs");
 
+function updatePackageJSON(platformAppDirectory) {
+    var appPackageJSONPath = path.join(platformAppDirectory, "package.json");
+    var appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
+
+    if (!(appPackageJSON["android"] && appPackageJSON["android"]["heapSnapshotScript"])) {
+        appPackageJSON["android"] = appPackageJSON["android"] || {};
+        appPackageJSON["android"]["heapSnapshot"] = "true";
+        appPackageJSON["android"]["heapSnapshotBlob"] = "tns_modules/nativescript-angular-snapshot/snapshots/";
+    }
+
+    fs.writeFileSync(appPackageJSONPath, JSON.stringify(appPackageJSON, null, 2));
+}
+
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
     var platformPluginDirectory = path.join(platformAppDirectory, "tns_modules/nativescript-angular-snapshot");
@@ -20,15 +33,13 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
     shelljs.rm("-f", path.join(platformPluginDirectory, "tns-java-classes.js"));
 
     shelljs.rm("-rf", path.join(platformPluginDirectory, "node_modules"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/shelljs"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/tns-core-modules-widgets"));
 
-    var appPackageJSONPath = path.join(platformAppDirectory, "package.json");
-    var appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
-
-    if (!(appPackageJSON["android"] && appPackageJSON["android"]["heapSnapshotScript"])) {
-        appPackageJSON["android"] = appPackageJSON["android"] || {};
-        appPackageJSON["android"]["heapSnapshot"] = "true";
-        appPackageJSON["android"]["heapSnapshotBlob"] = "tns_modules/nativescript-angular-snapshot/snapshots/";
+    var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules/tns-core-modules"));
+    for (var i = 0; i < tnsModulesFolders.length; i++) {
+        shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", tnsModulesFolders[i]));
     }
 
-    fs.writeFileSync(appPackageJSONPath, JSON.stringify(appPackageJSON, null, 2));
+    updatePackageJSON(platformAppDirectory);
 };
