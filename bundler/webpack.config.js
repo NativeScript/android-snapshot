@@ -24,7 +24,6 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             global: 'global',
-            global: 'window',
             __dirname: '__dirname'
         })
     ]

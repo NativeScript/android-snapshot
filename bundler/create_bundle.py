@@ -6,15 +6,16 @@ import json
 import shutil
 from subprocess import call
 
-def generate_require_statement(relativeRootPath, file):
+def generate_require_statement(basePath, relativeRootPath, file):
 	path_map = []
+	relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
+	absolutePath = basePath + "/" + relativePath;
 	if file.endswith(".js"):
-		relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
 		path_map.append('		"./tns_modules/' + relativePath + '": () => require("' + relativePath + '"),\n')
 		path_map.append('		"' + relativePath[:-len(".js")] + '": () => require("' + relativePath + '"),\n');
 		path_map.append('		"' + relativePath + '": () => require("' + relativePath + '"),\n');
 	elif file == "package.json":
-		with open('dist/webpack.records.json') as data_file:
+		with open(absolutePath) as data_file:
 			data = json.load(data_file)
 
 		if "main" in data:
@@ -30,7 +31,7 @@ def add_angular_dependencies(path_map):
 	angular_included_scripts = data["modules"]["byIdentifier"]
 	for angular_script_path in angular_included_scripts:
 		if "angular_bundle_scripts" not in angular_script_path and "webpack" not in angular_script_path:
-			path_map.extend(generate_require_statement("", angular_script_path))
+			path_map.extend(generate_require_statement(sys.argv[1], "", angular_script_path))
 
 def generate_require_override():
 	prefix = "global.__requireOverride = function(moduleId) {\n\
@@ -49,7 +50,7 @@ def generate_require_override():
 	return module;\
 };";
 
-	path_map = []
+	path_map = ['		"./_embedded_script_.js": () => {},\n']
 	rootPath = sys.argv[1]
 	exclude = set(["angular2", "rxjs", "zone.js", "reflect-metadata", "querystring", "parse5", "es6-shim", "es6-promise"])
 
@@ -59,7 +60,7 @@ def generate_require_override():
 		dirs[:] = [d for d in dirs if d not in exclude]
 		for file in files:
 			relativeRootPath = root[len(rootPath):]
-			path_map.extend(generate_require_statement(relativeRootPath, file))
+			path_map.extend(generate_require_statement(rootPath, relativeRootPath, file))
 
 	path_map.sort();
 	return prefix + ' '.join(map(str, path_map)) + suffix
