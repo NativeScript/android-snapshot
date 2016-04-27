@@ -8,6 +8,6 @@
   "dependencies": {
     "angular2": "2.0.0-beta.14",
     "nativescript-angular": "0.0.45",
-    "tns-core-modules": "2.0.0-angular-4"
+    "tns-core-modules": "2.0.0"
   }
 }
