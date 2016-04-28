@@ -11,16 +11,16 @@ def generate_require_statement(basePath, relativeRootPath, file):
 	relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
 	absolutePath = basePath + "/" + relativePath;
 	if file.endswith(".js"):
-		path_map.append('		"./tns_modules/' + relativePath + '": () => require("' + relativePath + '"),\n')
-		path_map.append('		"' + relativePath[:-len(".js")] + '": () => require("' + relativePath + '"),\n');
-		path_map.append('		"' + relativePath + '": () => require("' + relativePath + '"),\n');
+		path_map.append('		"./tns_modules/' + relativePath + '": function() { return require("' + relativePath + '") },\n')
+		path_map.append('		"' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
+		path_map.append('		"' + relativePath + '": function() { return require("' + relativePath + '") },\n');
 	elif file == "package.json":
 		with open(absolutePath) as data_file:
 			data = json.load(data_file)
 
 		if "main" in data:
-			path_map.append('		"' + relativeRootPath + '": () => require("' + relativeRootPath + '"),\n')
-			path_map.append('		"' + relativeRootPath + "/" + '": () => require("' + relativeRootPath + '"),\n')
+			path_map.append('		"' + relativeRootPath + '": function() { return require("' + relativeRootPath + '") },\n')
+			path_map.append('		"' + relativeRootPath + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
 
 	return path_map
 
@@ -50,7 +50,7 @@ def generate_require_override():
 	return module;\
 };";
 
-	path_map = ['		"./_embedded_script_.js": () => {},\n']
+	path_map = ['		"./_embedded_script_.js": function() { return {}; },\n']
 	rootPath = sys.argv[1]
 	exclude = set(["angular2", "rxjs", "zone.js", "reflect-metadata", "querystring", "parse5", "es6-shim", "es6-promise"])
 
