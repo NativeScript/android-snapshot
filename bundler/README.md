@@ -1,4 +1,10 @@
-To create bundle execute the following
+## Requirements
+* Python 2.7
 
-``` python create_bundle.py [location to precompiled tns_modules] ```
-``` python create_bundle.py /[project]/platforms/android/src/main/assets/app/tns_modules/ ```
+## Getting Started
+To create the bundle execute the following commands:
+
+```shell
+npm install
+python create_bundle.py "[project]/platforms/android/src/main/assets/app/tns_modules/"
+```
