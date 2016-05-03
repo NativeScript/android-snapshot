@@ -24,7 +24,8 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             global: 'global',
-            __dirname: '__dirname'
+            __dirname: '__dirname',
+            "global.__snapshot": true
         })
     ]
 };

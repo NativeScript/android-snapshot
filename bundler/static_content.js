@@ -1,5 +1,4 @@
 var global = this;
-global.__snapshot = true;
 
 this.__extends = function (d, b) {
 	for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
