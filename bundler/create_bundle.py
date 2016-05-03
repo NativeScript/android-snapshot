@@ -44,7 +44,7 @@ def generate_require_override():
 		module = moduleEntry();\n\
 		if (module && module.evalLazy) {\n\
 			module.evalLazy();\n\
-			delete module.evalLazy();\n\
+			delete module.evalLazy;\n\
 		}\n\
 	}\n\
 	return module;\n\
