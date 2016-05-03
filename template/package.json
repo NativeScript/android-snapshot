@@ -2,9 +2,6 @@
   "name": "nativescript-angular-snapshot-template",
   "version": "0.0.1",
   "main": "main.js",
-  "android": {
-    "v8Flags": "--expose_gc"
-  },
   "devDependencies": {
     "nativescript-dev-typescript": "^0.3.0"
   }
