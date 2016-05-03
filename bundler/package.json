@@ -1,8 +1,9 @@
 {
-    "name": "nativescript-snapshot-bundler",
-    "version": "0.0.1",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "webpack": "1.12.14"
-    }
+  "name": "nativescript-snapshot-bundler",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "uglifyjs": "^2.4.10",
+    "webpack": "1.12.14"
+  }
 }

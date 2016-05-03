@@ -87,4 +87,6 @@ if __name__ == "__main__":
 			to_file.write("\nexports = \n")
 			shutil.copyfileobj(from_file, to_file)
 
+	call(["./minify.sh", "dist/bundle.js"]);
+
 	print "Successfully created dist/bundle.js"

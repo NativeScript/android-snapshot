@@ -2,11 +2,11 @@
 
 set -e
 
-SCRIPT="$1"
+SCRIPT="$(dirname $1)/$(basename $1 .js)"
 
-uglifyjs "$SCRIPT" > "$SCRIPT.min.js"
-uglifyjs "$SCRIPT.min.js" -b > "$SCRIPT"
-sed -i .bak 's/^ *//' "$SCRIPT"
+./node_modules/.bin/uglifyjs "$SCRIPT.js" > "$SCRIPT.temp.js"
+./node_modules/.bin/uglifyjs "$SCRIPT.temp.js" -b > "$SCRIPT.min.js"
+sed -i .bak 's/^ *//' "$SCRIPT.min.js"
 
-rm "$SCRIPT.min.js"
-rm "$SCRIPT.bak"
+rm "$SCRIPT.temp.js"
+rm "$SCRIPT.min.js.bak"
