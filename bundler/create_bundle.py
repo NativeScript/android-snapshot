@@ -11,7 +11,6 @@ def generate_require_statement(basePath, relativeRootPath, file):
 	relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
 	absolutePath = basePath + "/" + relativePath;
 	if file.endswith(".js"):
-		path_map.append('		"./tns_modules/' + relativePath + '": function() { return require("' + relativePath + '") },\n')
 		path_map.append('		"' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
 		path_map.append('		"' + relativePath + '": function() { return require("' + relativePath + '") },\n');
 	elif file == "package.json":
@@ -35,6 +34,7 @@ def add_angular_dependencies(path_map):
 
 def generate_require_override():
 	prefix = "global.__requireOverride = function(moduleId) {\n\
+	moduleId = moduleId.replace(/^\.\/tns_modules\//, '')\n\
 	var map = { \n"
 
 	suffix = "	};\n\
@@ -47,7 +47,7 @@ def generate_require_override():
 			delete module.evalLazy();\n\
 		}\n\
 	}\n\
-	return module;\
+	return module;\n\
 };";
 
 	path_map = ['		"./_embedded_script_.js": function() { return {}; },\n']
