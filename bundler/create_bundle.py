@@ -86,7 +86,6 @@ if __name__ == "__main__":
 			from_file.readline()
 			with open("static_content.js") as static_content:
 				to_file.writelines(static_content)
-			to_file.write("\nexports = \n")
 			shutil.copyfileobj(from_file, to_file)
 
 	call(["./minify.sh", "dist/bundle.js"]);
