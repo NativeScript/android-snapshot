@@ -33,22 +33,24 @@ def add_angular_dependencies(path_map):
 			path_map.extend(generate_require_statement(sys.argv[1], "", angular_script_path))
 
 def generate_require_override():
-	prefix = "global.__requireOverride = function(moduleId) {\n\
-	moduleId = moduleId.replace(/^\.\/tns_modules\//, '')\n\
-	var map = { \n"
+	prefix = "global.__requireOverride = (function() {\n\
+	var map = {\n"
 
 	suffix = "	};\n\
-	var module;\n\
-	var moduleEntry = map[moduleId];\n\
-	if (moduleEntry) {\n\
-		module = moduleEntry();\n\
-		if (module && module.evalLazy) {\n\
-			module.evalLazy();\n\
-			delete module.evalLazy;\n\
+	return function(moduleId) {\n\
+		moduleId = moduleId.replace(/^\.\/tns_modules\//, '');\n\
+		var module;\n\
+		var moduleEntry = map[moduleId];\n\
+		if (moduleEntry) {\n\
+			module = moduleEntry();\n\
+			if (module && module.evalLazy) {\n\
+				module.evalLazy();\n\
+				delete module.evalLazy;\n\
+			}\n\
 		}\n\
+		return module;\n\
 	}\n\
-	return module;\n\
-};";
+}());";
 
 	path_map = ['		"./_embedded_script_.js": function() { return {}; },\n']
 	rootPath = sys.argv[1]
@@ -81,7 +83,7 @@ if __name__ == "__main__":
 
 	with open("dist/bundle.js", "w+b") as to_file:
 		with open("dist/ns_bundle.js", "r+b") as from_file:
-			from_file.readline() 
+			from_file.readline()
 			with open("static_content.js") as static_content:
 				to_file.writelines(static_content)
 			to_file.write("\nexports = \n")
