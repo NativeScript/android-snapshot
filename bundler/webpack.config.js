@@ -5,7 +5,10 @@ var rootPath = process.argv[3];
 module.exports = {
     context: rootPath,
     entry: {
-        app: path.join(__dirname, "dist/starter.js")
+        app: [
+            path.join(__dirname, "nativescript-angular-starter.js"),
+            path.join(__dirname, "dist/require-override-starter.js"),
+        ]
     },
     output: {
         path: path.join(__dirname, "dist"),

@@ -75,8 +75,7 @@ if __name__ == "__main__":
 
 	require_override = generate_require_override()
 
-	shutil.copy("starter.js", "dist/starter.js")
-	with open("dist/starter.js", "a") as starter:
+	with open("dist/require-override-starter.js", "w+b") as starter:
 		starter.write(require_override)
 
 	call(["webpack", "--root", sys.argv[1]]);
