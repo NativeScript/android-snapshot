@@ -10,7 +10,6 @@ module.exports = {
     output: {
         path: path.join(__dirname, "dist"),
         pathinfo: true,
-        libraryTarget: "commonjs2",
         filename: "angular_bundle.js"
     },
     resolve: {
@@ -20,14 +19,6 @@ module.exports = {
         modulesDirectories: [
             "tns_modules",
         ]
-    },
-    node: {
-        global: false,
-        process: false,
-        Buffer: false,
-        __filename: false,
-        __dirname: false,
-        setImmediate: false
     },
     recordsPath: path.join(__dirname, "dist", "webpack.records.json")
 };

@@ -13,7 +13,6 @@ module.exports = {
     output: {
         path: path.join(__dirname, "dist"),
         pathinfo: true,
-        libraryTarget: "commonjs2",
         filename: "ns_bundle.js"
     },
     resolve: {

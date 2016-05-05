@@ -82,7 +82,6 @@ if __name__ == "__main__":
 
 	with open("dist/bundle.js", "w+b") as to_file:
 		with open("dist/ns_bundle.js", "r+b") as from_file:
-			from_file.readline()
 			with open("static_content.js") as static_content:
 				to_file.writelines(static_content)
 			shutil.copyfileobj(from_file, to_file)
