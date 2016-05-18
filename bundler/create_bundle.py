@@ -10,6 +10,11 @@ def generate_require_statement(basePath, relativeRootPath, file):
 	path_map = []
 	relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
 	absolutePath = basePath + "/" + relativePath;
+
+	if file.endswith("/index.js"):
+		path_map.append('		"' + relativePath[:-len("/index.js")] + '": function() { return require("' + relativePath + '") },\n');
+		path_map.append('		"' + relativePath[:-len("index.js")] + '": function() { return require("' + relativePath + '") },\n');
+
 	if file.endswith(".js"):
 		path_map.append('		"' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
 		path_map.append('		"' + relativePath + '": function() { return require("' + relativePath + '") },\n');
@@ -54,15 +59,23 @@ def generate_require_override():
 
 	path_map = ['		"./_embedded_script_.js": function() { return {}; },\n']
 	rootPath = sys.argv[1]
-	exclude = set(["angular2", "rxjs", "zone.js", "reflect-metadata", "querystring", "parse5", "es6-shim", "es6-promise"])
+	exclude = set([
+		"@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated",
+		"rxjs", "zone.js", "reflect-metadata", "querystring", "parse5", "es6-shim", "es6-promise"])
 
 	add_angular_dependencies(path_map);
 
 	for root, dirs, files in os.walk(rootPath, topdown=True):
-		dirs[:] = [d for d in dirs if d not in exclude]
+		dirs[:] = [d for d in dirs]
 		for file in files:
 			relativeRootPath = root[len(rootPath):]
-			path_map.extend(generate_require_statement(rootPath, relativeRootPath, file))
+			isExcluded = False
+			for excludedDir in exclude:
+				if relativeRootPath.startswith(excludedDir):
+					isExcluded = True
+					break
+			if not isExcluded:
+				path_map.extend(generate_require_statement(rootPath, relativeRootPath, file))
 
 	path_map.sort();
 	return prefix + ' '.join(map(str, path_map)) + suffix

@@ -1,4 +1,4 @@
-import {Component, Directive, Host, ElementRef, Input, enableProdMode} from 'angular2/core';
+import {Component, Directive, Host, ElementRef, Input, enableProdMode} from '@angular/core';
 import {Observable} from 'data/observable';
 import {TextValueAccessor} from 'nativescript-angular/value-accessors/text-value-accessor';
 import {CheckedValueAccessor} from 'nativescript-angular/value-accessors/checked-value-accessor';
