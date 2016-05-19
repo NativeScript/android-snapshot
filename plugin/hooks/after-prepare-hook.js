@@ -41,6 +41,9 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularPackages[i]));
     }
     shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/nativescript-angular"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/zone.js"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/reflect-metadata"));
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/querystring"));
 
     var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules/tns-core-modules"));
     for (var i = 0; i < tnsModulesFolders.length; i++) {

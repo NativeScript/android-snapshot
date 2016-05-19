@@ -1,19 +1,19 @@
 var webpack = require("webpack");
 var path = require("path");
-var rootPath = process.argv[3];
+var rootPath = process.argv[5];
 
 module.exports = {
     context: rootPath,
     entry: {
         app: [
-            path.join(__dirname, "nativescript-angular-starter.js"),
-            path.join(__dirname, "dist/require-override-starter.js"),
+            path.join(__dirname, process.argv[7]),
+            path.join(__dirname, "dist/require-override-warmup.js"),
         ]
     },
     output: {
         path: path.join(__dirname, "dist"),
         pathinfo: true,
-        filename: "ns_bundle.js"
+        filename: "bundle.js"
     },
     resolve: {
         root: rootPath,
@@ -35,5 +35,6 @@ module.exports = {
         __filename: false,
         __dirname: false,
         setImmediate: false
-    }
+    },
+    recordsPath: path.join(__dirname, "dist", "bundle.records.json")
 };
