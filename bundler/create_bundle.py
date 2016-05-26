@@ -40,26 +40,7 @@ def add_angular_dependencies(path_map):
             path_map.extend(generate_require_statement(sys.argv[1], "", angular_script_path))
 
 def generate_require_override():
-    prefix = "global.__requireOverride = (function() {\n\
-    var map = {\n"
-
-    suffix = "    };\n\
-    return function(moduleId) {\n\
-        moduleId = moduleId.replace(/^\.\/tns_modules\//, '');\n\
-        var module;\n\
-        var moduleEntry = map[moduleId];\n\
-        if (moduleEntry) {\n\
-            module = moduleEntry();\n\
-            if (module && module.evalLazy) {\n\
-                module.evalLazy();\n\
-                delete module.evalLazy;\n\
-            }\n\
-        }\n\
-        return module;\n\
-    }\n\
-}());";
-
-    path_map = ['       "./_embedded_script_.js": function() { return {}; },\n']
+    path_map = ['        "./_embedded_script_.js": function() { return {}; },\n']
     rootPath = sys.argv[1]
     exclude = set([
         "@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated",
@@ -80,8 +61,10 @@ def generate_require_override():
             if not isExcluded:
                 path_map.extend(generate_require_statement(rootPath, relativeRootPath, file))
 
+
     path_map.sort();
-    return prefix + ' '.join(map(str, path_map)) + suffix
+    with open("require-override-template.js", "r+b") as require_template:
+        return require_template.read().replace('/* __require-map__ */', ' '.join(map(str, path_map)).rstrip(), 1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
