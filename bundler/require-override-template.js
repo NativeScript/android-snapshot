@@ -25,15 +25,19 @@ global.__requireOverride = (function() {
             return;
         }
 
-        var module = moduleEntry();
-        if (module && module.evalLazy) {
-            module.evalLazy();
-            delete module.evalLazy;
-        }
-        return module;
+        return moduleEntry();
+    }
+
+    function __trace(message) {
+        android.util.Log.v("TNS.Native", "" + message);
     }
 
     return function(moduleId, dirname) {
+        while (global.__pendingJavaExtendCalls && __pendingJavaExtendCalls.length) {
+            var extendCall = __pendingJavaExtendCalls.shift();
+            extendCall();
+        }
+
         moduleId = moduleId.replace(/^\.\/tns_modules\//, "");
         var module = __require(moduleId);
         if (module) {
