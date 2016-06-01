@@ -36,7 +36,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
 
     shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/shelljs"));
 
-    var angularPackages = ["@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated"];
+    var angularPackages = ["@angular/common", "@angular/compiler", "@angular/core", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated"];
     for (var i = 0; i < angularPackages.length; i++) {
         shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularPackages[i]));
     }

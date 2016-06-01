@@ -7,11 +7,11 @@ module.exports = {
     entry: {
         app: [
             path.join(__dirname, process.argv[7]),
-            path.join(__dirname, "dist/require-override-warmup.js"),
+            path.join(__dirname, "build/bundler/require-override-warmup.js"),
         ]
     },
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "build/bundler"),
         pathinfo: true,
         filename: "bundle.js"
     },
@@ -35,6 +35,5 @@ module.exports = {
         __filename: false,
         __dirname: false,
         setImmediate: false
-    },
-    recordsPath: path.join(__dirname, "dist", "bundle.records.json")
+    }
 };

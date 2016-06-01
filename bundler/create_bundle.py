@@ -31,7 +31,7 @@ def generate_require_statement(basePath, relativeRootPath, file):
     return path_map
 
 def add_angular_dependencies(path_map):
-    with open('dist/angular.records.json') as data_file:
+    with open('build/bundler/angular.records.json') as data_file:
         data = json.load(data_file)
 
     angular_included_scripts = data["modules"]["byIdentifier"]
@@ -73,31 +73,31 @@ if __name__ == "__main__":
 
     root_path = sys.argv[1]
 
-    if not os.path.exists("dist"):
-        os.makedirs("dist")
+    if not os.path.exists("build/bundler"):
+        os.makedirs("build/bundler")
 
     if len(sys.argv) == 3 and sys.argv[2] == "--ng":
         print "Creating Angular bundle"
         angular_bundle = True
 
     if angular_bundle:
-        call(["webpack", "--config", "angular.webpack.config.js", "--root", root_path]);
+        call(["node_modules/webpack/bin/webpack.js", "--config", "angular.webpack.config.js", "--root", root_path]);
 
     require_override = generate_require_override()
 
-    with open("dist/require-override-warmup.js", "w+b") as require_warmup:
+    with open("build/bundler/require-override-warmup.js", "w+b") as require_warmup:
         require_warmup.write(require_override)
 
     warmup_file = "nativescript-angular-warmup.js" if angular_bundle else "nativescript-warmup.js"
-    call(["webpack", "--config", "bundle.webpack.config.js",  "--root", root_path, "--warmup_file", warmup_file]);
+    call(["node_modules/webpack/bin/webpack.js", "--config", "bundle.webpack.config.js",  "--root", root_path, "--warmup_file", warmup_file]);
 
-    with open("dist/bundle.js", "r+b") as original_bundle:
+    with open("build/bundler/bundle.js", "r+b") as original_bundle:
         bundle_data = original_bundle.read()
 
-    with open("dist/bundle.js", "w+b") as modified_bundle:
+    with open("build/bundler/bundle.js", "w+b") as modified_bundle:
         with open("static_content.js") as static_content:
             modified_bundle.write(static_content.read() + bundle_data)
 
-    call(["./minify.sh", "dist/bundle.js"]);
+    call(["./minify.sh", "build/bundler/bundle.js"]);
 
-    print "Successfully created dist/bundle.js"
+    print "Successfully created build/bundler/bundle.js"

@@ -8,7 +8,7 @@ module.exports = {
         app: path.join(__dirname, "angular_bundle_scripts.js")
     },
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "build/bundler"),
         pathinfo: true,
         filename: "angular.bundle.js"
     },
@@ -20,5 +20,5 @@ module.exports = {
             "tns_modules",
         ]
     },
-    recordsPath: path.join(__dirname, "dist", "angular.records.json")
+    recordsPath: path.join(__dirname, "build/bundler", "angular.records.json")
 };
