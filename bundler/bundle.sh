@@ -19,9 +19,9 @@ tns prepare android --path "$BUILD_DIR/SkeletonCoreApp"
 
 python create_bundle.py "$BUILD_DIR/SkeletonCoreApp/platforms/android/src/main/assets/app/tns_modules/"
 
-mkdir -p "$DIST_DIR/tns-core-modules-snapshot" && pushd "$_"
-cp "$BUILD_DIR/bundler/bundle.min.js" "_embedded_script_.android.js"
-mksnapshot "$(pwd)/_embedded_script_.android.js" "$(pwd)/snapshot"
+mkdir -p "$DIST_DIR/tns-core-modules-snapshot/platforms/android" && pushd "$_"
+cp "$BUILD_DIR/bundler/bundle.min.js" "_embedded_script_.js"
+mksnapshot "$(pwd)/_embedded_script_.js" "$(pwd)/snapshot"
 popd
 
 echo "Creating nativescript-angular snapshot ..."
@@ -30,7 +30,7 @@ tns prepare android --path "$BUILD_DIR/SkeletonAngularApp"
 
 python create_bundle.py "$BUILD_DIR/SkeletonAngularApp/platforms/android/src/main/assets/app/tns_modules/" --ng
 
-mkdir -p "$DIST_DIR/nativescript-angular-snapshot" && pushd "$_"
-cp "$BUILD_DIR/bundler/bundle.min.js" "_embedded_script_.android.js"
-mksnapshot "$(pwd)/_embedded_script_.android.js" "$(pwd)/snapshot"
+mkdir -p "$DIST_DIR/nativescript-angular-snapshot/platforms/android" && pushd "$_"
+cp "$BUILD_DIR/bundler/bundle.min.js" "_embedded_script_.js"
+mksnapshot "$(pwd)/_embedded_script_.js" "$(pwd)/snapshot"
 popd
