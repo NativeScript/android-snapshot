@@ -6,11 +6,9 @@ function updatePackageJSON(platformAppDirectory) {
     var appPackageJSONPath = path.join(platformAppDirectory, "package.json");
     var appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
 
-    if (!(appPackageJSON["android"] && appPackageJSON["android"]["heapSnapshotScript"])) {
-        appPackageJSON["android"] = appPackageJSON["android"] || {};
-        appPackageJSON["android"]["heapSnapshot"] = "true";
-        appPackageJSON["android"]["heapSnapshotBlob"] = "tns_modules/nativescript-angular-snapshot/snapshots/";
-    }
+    appPackageJSON["android"] = appPackageJSON["android"] || {};
+    appPackageJSON["android"]["heapSnapshot"] = "true";
+    appPackageJSON["android"]["heapSnapshotBlob"] = "tns_modules/nativescript-angular-snapshot/snapshots/";
 
     fs.writeFileSync(appPackageJSONPath, JSON.stringify(appPackageJSON, null, 2));
 }
