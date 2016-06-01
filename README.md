@@ -15,14 +15,6 @@ Tested on a Nexus 5 device:
 * NativeScript CLI 2.0
 * NativeScript Runtime for Android 2.0
 
-## Getting Started
-```shell
-$ tns create app-demo --template ./template
-$ cd app-demo
-$ tns plugin add ../plugin
-$ tns run android
-```
-
 ## Limitations
 * APK file size will be increased with 6MB.
 * The installed application size will be increased with an additional 24MB (5MB in the future).
