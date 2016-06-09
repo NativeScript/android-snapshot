@@ -1,6 +1,6 @@
 {
   "name": "${ORIGINAL_NAME}-snapshot",
-  "version": "${ORIGINAL_VERSION}",
+  "version": "${ORIGINAL_VERSION}-${V8_VERSION}",
   "repository": {
     "type": "git",
     "url": "${ORIGINAL_RERO_URL}"

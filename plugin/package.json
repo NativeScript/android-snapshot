@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "nativescript-hook": "^0.2.1",
+    "semver": "^5.1.0",
     "shelljs": "^0.6.0"
   },
   "scripts": {
@@ -12,9 +13,14 @@
   },
   "nativescript": {
     "platforms": {
-      "android": "2.0.0"
+      "android": "2.1.0"
     },
     "hooks": [
+      {
+        "type": "before-prepare",
+        "script": "hooks/before-prepare-hook.js",
+        "inject": true
+      },
       {
         "type": "after-prepare",
         "script": "hooks/after-prepare-hook.js",

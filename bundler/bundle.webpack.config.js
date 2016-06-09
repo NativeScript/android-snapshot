@@ -35,5 +35,6 @@ module.exports = {
         __filename: false,
         __dirname: false,
         setImmediate: false
-    }
+    },
+    recordsPath: path.join(__dirname, "build/bundler", "bundle.records.json")
 };

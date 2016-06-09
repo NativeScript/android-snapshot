@@ -21,4 +21,6 @@ echo "***** Generating x86 *****"
 mkdir -p "$OUTPUT_DIR/x86/"
 ./mksnapshot-x86 "$SCRIPT" --startup_blob "$OUTPUT_DIR/x86/snapshot.blob" $V8_FLAGS
 
+du -bh $OUTPUT_DIR
+
 echo "Finished generating snapshots."

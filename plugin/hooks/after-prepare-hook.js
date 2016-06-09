@@ -1,52 +1,97 @@
 var path = require("path");
 var fs = require("fs");
 var shelljs = require("shelljs");
+var common = require("./common");
 
-function updatePackageJSON(platformAppDirectory) {
-    var appPackageJSONPath = path.join(platformAppDirectory, "package.json");
+function addSnapshotKeyInPackageJSON(appPackageJSONPath) {
     var appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
 
     appPackageJSON["android"] = appPackageJSON["android"] || {};
-    appPackageJSON["android"]["heapSnapshot"] = "true";
-    appPackageJSON["android"]["heapSnapshotBlob"] = "tns_modules/nativescript-angular-snapshot/snapshots/";
+    appPackageJSON["android"]["heapSnapshotBlob"] = "../snapshots";
 
     fs.writeFileSync(appPackageJSONPath, JSON.stringify(appPackageJSON, null, 2));
 }
 
-module.exports = function(logger, platformsData, projectData, hookArgs) {
-    var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
-    var platformPluginDirectory = path.join(platformAppDirectory, "tns_modules/nativescript-angular-snapshot");
-
-    if (hookArgs.platform !== "android") {
-        shelljs.rm("-rf", platformPluginDirectory);
-        return;
-    }
-
-    var pluginDirectory = path.join(projectData.projectDir, "node_modules/nativescript-angular-snapshot");
-
-    shelljs.cp(path.join(pluginDirectory, "_embedded_script_.android.js"), path.join(platformAppDirectory, "_embedded_script_.js"));
-    shelljs.rm("-f", path.join(platformPluginDirectory, "_embedded_script_.js"));
-
-    shelljs.cp(path.join(pluginDirectory, "tns-java-classes.android.js"), path.join(platformAppDirectory, "tns-java-classes.js"));
-    shelljs.rm("-f", path.join(platformPluginDirectory, "tns-java-classes.js"));
-
-    shelljs.rm("-rf", path.join(platformPluginDirectory, "node_modules"));
-
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/shelljs"));
-
-    var angularPackages = ["@angular/common", "@angular/compiler", "@angular/core", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated"];
-    for (var i = 0; i < angularPackages.length; i++) {
-        shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularPackages[i]));
-    }
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/nativescript-angular"));
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/zone.js"));
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/reflect-metadata"));
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/querystring"));
-
-    var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules/tns-core-modules"));
+function deleteNativeScriptCoreModules(projectData, platformAppDirectory) {
+    var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules", "tns-core-modules"));
     for (var i = 0; i < tnsModulesFolders.length; i++) {
         shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", tnsModulesFolders[i]));
     }
+}
 
-    updatePackageJSON(platformAppDirectory);
+function deleteAngularModules(projectData, platformAppDirectory) {
+    var angularDependencies = Object.keys(JSON.parse(fs.readFileSync(path.join(projectData.projectDir, "node_modules", "nativescript-angular/package.json"), "utf8"))["dependencies"]);
+    for (var i = 0; i < angularDependencies.length; i++) {
+        if (/^@angular\//.test(angularDependencies[i])) {
+            shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularDependencies[i]));
+        }
+    }
+
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", "nativescript-angular"));
+}
+
+function deleteBundledFiles(pluginDirectory, platformAppDirectory) {
+    var modulesInSnapshot = Object.keys(JSON.parse(fs.readFileSync(path.join(pluginDirectory, "platforms/android-snapshot-files/bundle.records.json"), "utf8"))["modules"]["byIdentifier"]);
+    for (var i = 0; i < modulesInSnapshot.length; i++) {
+        if (/^\.\.\//.test(modulesInSnapshot[i])) {
+            continue;
+        }
+
+        shelljs.rm("-f", path.join(platformAppDirectory, "tns_modules", modulesInSnapshot[i]));
+        shelljs.rm("-f", path.join(platformAppDirectory, "tns_modules", modulesInSnapshot[i].replace(/\.js$/, ".ts")));
+        shelljs.rm("-f", path.join(platformAppDirectory, "tns_modules", modulesInSnapshot[i].replace(/\.js$/, ".d.ts")));
+        shelljs.rm("-f", path.join(platformAppDirectory, "tns_modules", modulesInSnapshot[i] + ".map"));
+    }
+}
+
+function copySnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
+    shelljs.cp(path.join(pluginDirectory, "platforms/android-snapshot-files/_embedded_script_.js"), platformAppDirectory);
+    shelljs.cp(path.join(pluginDirectory, "platforms/android-snapshot-files/tns-java-classes.js"), platformAppDirectory);
+
+    shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
+    shelljs.cp("-r", path.join(pluginDirectory, "platforms/android-snapshot-files/snapshots"), path.join(platformAppDirectory, ".."));
+}
+
+module.exports = function(logger, platformsData, projectData, hookArgs) {
+    var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
+
+    if (!common.isSnapshotEnabled(projectData, hookArgs)) {
+        if (hookArgs.platform === "android") {
+            // TODO: Fix this in the CLI if possible
+            if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
+                !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules", "@angular/core"))) {
+                shelljs.cp("-r", path.join(projectData.projectDir, "node_modules", "@angular"), path.join(platformAppDirectory, "tns_modules"));
+            }
+        }
+        return;
+    }
+
+    var isAngularApp = common.isAngularInstalled(projectData);
+    var snapshotPackage = common.getSnapshotPackage(projectData, isAngularApp);
+
+    // Installation has failed for some reason.
+    if (!common.isPackageInstalled(snapshotPackage)) {
+        return;
+    }
+
+    var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackage.name);
+
+    deleteNativeScriptCoreModules(projectData, platformAppDirectory);
+    if (isAngularApp) {
+        deleteAngularModules(projectData, platformAppDirectory);
+    }
+
+    deleteBundledFiles(pluginDirectory, platformAppDirectory);
+
+    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", "shelljs"));
+
+    copySnapshotPluginFiles(pluginDirectory, platformAppDirectory);
+    addSnapshotKeyInPackageJSON(path.join(platformAppDirectory, "package.json"));
+
+    if (isAngularApp) {
+        logger.warn("The \"nativescript-angular\" and \"tns-core-modules\" packages and their dependencies have been deleted from the final assets.");
+    } else {
+        logger.warn("The \"tns-core-modules\" package and its dependencies have been deleted from the final assets.");
+    }
+    logger.warn("Application will now use package \"" + snapshotPackage.name + "@" + snapshotPackage.version + "\" which includes these packages in precompiled form instead.");
 };
