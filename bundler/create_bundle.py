@@ -43,7 +43,7 @@ def generate_require_override():
     path_map = ['        "./_embedded_script_.js": function() { return {}; },\n']
     rootPath = sys.argv[1]
     exclude = set([
-        "@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated",
+        "@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated", "@angular/router",
         "rxjs", "zone.js/lib", "reflect-metadata/test",  "reflect-metadata/temp", "querystring/test", "parse5", "es6-shim", "es6-promise"])
 
     if angular_bundle:

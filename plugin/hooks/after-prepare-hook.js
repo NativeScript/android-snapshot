@@ -33,7 +33,7 @@ function deleteAngularModules(projectData, platformAppDirectory) {
 function deleteBundledFiles(pluginDirectory, platformAppDirectory) {
     var modulesInSnapshot = Object.keys(JSON.parse(fs.readFileSync(path.join(pluginDirectory, "platforms/android-snapshot-files/bundle.records.json"), "utf8"))["modules"]["byIdentifier"]);
     for (var i = 0; i < modulesInSnapshot.length; i++) {
-        if (/^\.\.\//.test(modulesInSnapshot[i])) {
+        if (/^\.\.\//.test(modulesInSnapshot[i]) || modulesInSnapshot[i].indexOf("^") !== -1) {
             continue;
         }
 
