@@ -1,7 +1,6 @@
 var path = require("path");
 var fs = require("fs");
 var shelljs = require("shelljs");
-var child_process = require("child_process");
 
 exports.environmentVariableToggleKey = "TNS_ANDROID_SNAPSHOT";
 
@@ -54,8 +53,9 @@ exports.getSnapshotPackage = function(projectData, isAngularApp) {
 };
 
 exports.isPackageInstalled = function(packageInfo) {
-    var npmSnapshotPackageInfo = JSON.parse(child_process.spawnSync("npm", ["ls", "--json", packageInfo.name + "@" + packageInfo.version]).stdout.toString("utf8"));
-    if (!npmSnapshotPackageInfo.dependencies) {
+    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + packageInfo.version, { silent: true });
+    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
+    if (!packageInfo.dependencies) {
         return false;
     }
 
@@ -63,8 +63,8 @@ exports.isPackageInstalled = function(packageInfo) {
 };
 
 exports.isPackagePublished = function(packageInfo) {
-    var proc = child_process.spawnSync("npm", ["view", "--json", packageInfo.name, "versions"]);
-    if (proc.status !== 0) {
+    var proc = shelljs.exec("npm view --json " + packageInfo.name + " versions", { silent: true });
+    if (proc.code !== 0) {
         return false;
     }
 
@@ -86,12 +86,12 @@ exports.isPackagePublished = function(packageInfo) {
 };
 
 exports.installPublishedPackage = function(packageInfo) {
-    var proc = child_process.spawnSync("npm", ["install", packageInfo.name + "@" + packageInfo.version]);
-    if (proc.status !== 0) {
+    var proc = shelljs.exec("npm install " + packageInfo.name + "@" + packageInfo.version, { silent: true });
+    if (proc.code !== 0) {
         throw new Error("Failed to install package \"" + packageInfo.name + "@" + packageInfo.version + "\".");
     }
 };
 
 exports.uninstallPackage = function(packageInfo) {
-    child_process.spawnSync("npm", ["uninstall", packageInfo.name]);
+    shelljs.exec("npm uninstall " + packageInfo.name, { silent: true });
 };
