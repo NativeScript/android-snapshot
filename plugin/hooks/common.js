@@ -85,7 +85,7 @@ exports.isPackagePublished = function(packageInfo) {
     return false;
 };
 
-exports.installPublishedPackage = function(packageInfo) {
+exports.installPublishedPackage = function(logger, packageInfo) {
     var proc = shelljs.exec("npm install " + packageInfo.name + "@" + packageInfo.version, { silent: true });
     if (proc.code !== 0) {
         throw new Error("Failed to install package \"" + packageInfo.name + "@" + packageInfo.version + "\".");
