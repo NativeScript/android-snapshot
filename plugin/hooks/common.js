@@ -95,3 +95,14 @@ exports.installPublishedPackage = function(logger, packageInfo) {
 exports.uninstallPackage = function(packageInfo) {
     shelljs.exec("npm uninstall " + packageInfo.name, { silent: true });
 };
+
+// This is required to ensure that all npm operations are executed in the project directory.
+exports.executeInProjectDir = function(projectDir, action) {
+    var currentDir = shelljs.pwd();
+    shelljs.cd(projectDir);
+    try {
+        action();
+    } finally {
+        shelljs.cd(currentDir);
+    }
+}

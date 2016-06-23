@@ -53,45 +53,47 @@ function copySnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
 }
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
-    var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
+    common.executeInProjectDir(projectData.projectDir, function() {
+        var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
 
-    if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-        if (hookArgs.platform === "android") {
-            // TODO: Fix this in the CLI if possible
-            if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
-                !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules", "@angular/core"))) {
-                shelljs.cp("-r", path.join(projectData.projectDir, "node_modules", "@angular"), path.join(platformAppDirectory, "tns_modules"));
+        if (!common.isSnapshotEnabled(projectData, hookArgs)) {
+            if (hookArgs.platform === "android") {
+                // TODO: Fix this in the CLI if possible
+                if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
+                    !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules", "@angular/core"))) {
+                    shelljs.cp("-r", path.join(projectData.projectDir, "node_modules", "@angular"), path.join(platformAppDirectory, "tns_modules"));
+                }
             }
+            return;
         }
-        return;
-    }
 
-    var isAngularApp = common.isAngularInstalled(projectData);
-    var snapshotPackage = common.getSnapshotPackage(projectData, isAngularApp);
+        var isAngularApp = common.isAngularInstalled(projectData);
+        var snapshotPackage = common.getSnapshotPackage(projectData, isAngularApp);
 
-    // Installation has failed for some reason.
-    if (!common.isPackageInstalled(snapshotPackage)) {
-        return;
-    }
+        // Installation has failed for some reason.
+        if (!common.isPackageInstalled(snapshotPackage)) {
+            return;
+        }
 
-    var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackage.name);
+        var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackage.name);
 
-    deleteNativeScriptCoreModules(projectData, platformAppDirectory);
-    if (isAngularApp) {
-        deleteAngularModules(projectData, platformAppDirectory);
-    }
+        deleteNativeScriptCoreModules(projectData, platformAppDirectory);
+        if (isAngularApp) {
+            deleteAngularModules(projectData, platformAppDirectory);
+        }
 
-    deleteBundledFiles(pluginDirectory, platformAppDirectory);
+        deleteBundledFiles(pluginDirectory, platformAppDirectory);
 
-    shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", "shelljs"));
+        shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", "shelljs"));
 
-    copySnapshotPluginFiles(pluginDirectory, platformAppDirectory);
-    addSnapshotKeyInPackageJSON(path.join(platformAppDirectory, "package.json"));
+        copySnapshotPluginFiles(pluginDirectory, platformAppDirectory);
+        addSnapshotKeyInPackageJSON(path.join(platformAppDirectory, "package.json"));
 
-    if (isAngularApp) {
-        logger.warn("The \"nativescript-angular\" and \"tns-core-modules\" packages and their dependencies have been deleted from the final assets.");
-    } else {
-        logger.warn("The \"tns-core-modules\" package and its dependencies have been deleted from the final assets.");
-    }
-    logger.warn("Application will now use package \"" + snapshotPackage.name + "@" + snapshotPackage.version + "\" which includes these packages in precompiled form instead.");
+        if (isAngularApp) {
+            logger.warn("The \"nativescript-angular\" and \"tns-core-modules\" packages and their dependencies have been deleted from the final assets.");
+        } else {
+            logger.warn("The \"tns-core-modules\" package and its dependencies have been deleted from the final assets.");
+        }
+        logger.warn("Application will now use package \"" + snapshotPackage.name + "@" + snapshotPackage.version + "\" which includes these packages in precompiled form instead.");
+    });
 };
