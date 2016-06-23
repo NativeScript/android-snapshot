@@ -6,6 +6,13 @@ For more information follow [NativeScript#1563](https://github.com/NativeScript/
 * [`/bundler`](./bundler) - A JavaScript module bundler and tool to create snapshot packages.
 * [`/plugin`](./plugin) - NativeScript plugin that downloads the correct snapshot package and prepares the app for using it.
 
+## Getting Started
+
+To install [the plugin](./plugin):
+```shell
+tns install android-snapshot
+```
+
 ## Results
 Startup time tested on a Nexus 5 device:
 
