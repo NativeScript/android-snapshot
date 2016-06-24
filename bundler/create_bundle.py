@@ -40,7 +40,7 @@ def add_angular_dependencies(path_map):
             path_map.extend(generate_require_statement(sys.argv[1], "", angular_script_path))
 
 def generate_require_override():
-    path_map = ['        "./_embedded_script_.js": function() { return {}; },\n']
+    path_map = []
     rootPath = sys.argv[1]
     exclude = set([
         "@angular/common", "@angular/compiler", "@angular/core", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router-deprecated", "@angular/router",
