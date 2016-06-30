@@ -30,5 +30,5 @@ Startup time tested on a Nexus 5 device:
 * APK file size will be increased with 1.5MB (6MB with Angular).
 * The installed application size will be increased with an additional 1.2MB (5MB with Angular).
 * It is not possible to step into the embedded script from VS Code. You must use the CLI if you want to debug it.
-* LiveSync is not supported.
+* LiveSyncing may work in most cases, but is not officially supported.
 * Snapshots are not compatible with the [NativeScript webpack plugin](https://github.com/NativeScript/nativescript-dev-webpack).
