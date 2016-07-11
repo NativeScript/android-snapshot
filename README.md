@@ -1,6 +1,6 @@
 This repo provides tools to generate and distribute [V8 heap snapshot](https://v8project.blogspot.bg/2015/09/custom-startup-snapshots.html) packages of the [Core NativeScript](https://github.com/NativeScript/NativeScript) / [NativeScript+Angular](https://github.com/NativeScript/nativescript-angular) modules to reduce the startup time of the [NativeScript Android Runtime](https://github.com/NativeScript/android-runtime).
 
-For more information follow [NativeScript#1563](https://github.com/NativeScript/NativeScript/issues/1563) and look at the [Android Runtime docs](http://v8project.blogspot.bg/2015/09/custom-startup-snapshots.html).
+For more information follow [NativeScript#1563](https://github.com/NativeScript/NativeScript/issues/1563) and look at the [Android Runtime docs](https://docs.nativescript.org/runtimes/android/advanced-topics/V8-heap-snapshots).
 
 ## What You'll Find
 * [`/bundler`](./bundler) - A JavaScript module bundler and tool to create snapshot packages.
