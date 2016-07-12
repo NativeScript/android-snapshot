@@ -4,7 +4,12 @@ var shelljs = require("shelljs");
 var common = require("./common");
 
 function addSnapshotKeyInPackageJSON(appPackageJSONPath) {
-    var appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
+    var appPackageJSON;
+    if (!shelljs.test("-e", appPackageJSONPath)) {
+        appPackageJSON = {};
+    } else {
+        appPackageJSON = JSON.parse(fs.readFileSync(appPackageJSONPath, 'utf8'));
+    }
 
     appPackageJSON["android"] = appPackageJSON["android"] || {};
     appPackageJSON["android"]["heapSnapshotBlob"] = "../snapshots";
