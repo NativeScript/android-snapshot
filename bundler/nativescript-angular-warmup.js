@@ -1,1 +1,1 @@
-require("nativescript-angular/application");
+require("nativescript-angular/platform");
