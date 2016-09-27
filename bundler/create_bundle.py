@@ -14,37 +14,64 @@ def generate_require_statement(basePath, relativeRootPath, file):
     absolutePath = basePath + "/" + relativePath;
 
     if file.endswith("/index.js"):
-        path_map.append('       "' + relativePath[:-len("/index.js")] + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('       "' + relativePath[:-len("index.js")] + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + relativePath[:-len("/index.js")] + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + relativePath[:-len("index.js")] + '": function() { return require("' + relativePath + '") },\n');
 
     if file.endswith(".js"):
-        path_map.append('       "' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('       "' + relativePath + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + relativePath + '": function() { return require("' + relativePath + '") },\n');
     elif file == "package.json":
         with open(absolutePath) as data_file:
             data = json.load(data_file)
 
         if "main" in data:
-            path_map.append('       "' + relativeRootPath + '": function() { return require("' + relativeRootPath + '") },\n')
-            path_map.append('       "' + relativeRootPath + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append('        "' + relativeRootPath + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append('        "' + relativeRootPath + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
 
     return path_map
 
 def add_angular_dependencies(path_map):
-    with open('build/bundler/angular.records.json') as data_file:
-        data = json.load(data_file)
-
-    angular_included_scripts = data["modules"]["byIdentifier"]
-    for angular_script_path in angular_included_scripts:
-        if "angular_bundle_scripts" not in angular_script_path and "webpack" not in angular_script_path:
-            path_map.extend(generate_require_statement(sys.argv[1], "", angular_script_path))
+    rootPath = sys.argv[1]
+    path_map.append('        "@angular/common": function() { return require("@angular/common") },\n');
+    path_map.append('        "@angular/common/": function() { return require("@angular/common") },\n');
+    path_map.append('        "@angular/compiler": function() { return require("@angular/compiler") },\n');
+    path_map.append('        "@angular/compiler/": function() { return require("@angular/compiler") },\n');
+    path_map.append('        "@angular/core": function() { return require("@angular/core") },\n');
+    path_map.append('        "@angular/core/": function() { return require("@angular/core") },\n');
+    path_map.append('        "@angular/forms": function() { return require("@angular/forms") },\n');
+    path_map.append('        "@angular/forms/": function() { return require("@angular/forms") },\n');
+    path_map.append('        "@angular/http": function() { return require("@angular/http") },\n');
+    path_map.append('        "@angular/http/": function() { return require("@angular/http") },\n');
+    path_map.append('        "@angular/platform-browser": function() { return require("@angular/platform-browser") },\n');
+    path_map.append('        "@angular/platform-browser/": function() { return require("@angular/platform-browser") },\n');
+    path_map.append('        "@angular/platform-browser-dynamic": function() { return require("@angular/platform-browser-dynamic") },\n');
+    path_map.append('        "@angular/platform-browser-dynamic/": function() { return require("@angular/platform-browser-dynamic") },\n');
+    path_map.append('        "@angular/platform-server": function() { return require("@angular/platform-server") },\n');
+    path_map.append('        "@angular/platform-server/": function() { return require("@angular/platform-server") },\n');
+    path_map.append('        "@angular/router": function() { return require("@angular/router") },\n');
+    path_map.append('        "@angular/router/": function() { return require("@angular/router") },\n');
 
 def generate_require_override():
     path_map = []
     rootPath = sys.argv[1]
     exclude = set([
-        "@angular/common", "@angular/compiler", "@angular/core", "@angular/forms", "@angular/http", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-server", "@angular/router",
-        "rxjs", "zone.js/lib", "reflect-metadata/test",  "reflect-metadata/temp", "querystring/test", "parse5", "es6-shim", "es6-promise"])
+        "@angular/common",
+        "@angular/compiler",
+        "@angular/core",
+        "@angular/forms",
+        "@angular/http",
+        "@angular/platform-browser",
+        "@angular/platform-browser-dynamic",
+        "@angular/platform-server",
+        "@angular/router",
+        "parse5",
+        "rxjs/bundles",
+        "rxjs/testing",
+        "querystring/test",
+        "reflect-metadata/test",
+        "reflect-metadata/temp",
+        "symbol-observable/es",
+    ])
 
     if angular_bundle:
         add_angular_dependencies(path_map);
@@ -64,7 +91,7 @@ def generate_require_override():
 
     path_map.sort();
     with open("require-override-template.js", "r+b") as require_template:
-        return require_template.read().replace('/* __require-map__ */', ' '.join(map(str, path_map)).rstrip(), 1)
+        return require_template.read().replace('/* __require-map__ */', ''.join(map(str, path_map)).rstrip(), 1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -79,9 +106,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 3 and sys.argv[2] == "--ng":
         print "Creating Angular bundle"
         angular_bundle = True
-
-    if angular_bundle:
-        call(["node_modules/webpack/bin/webpack.js", "--config", "angular.webpack.config.js", "--root", root_path]);
 
     require_override = generate_require_override()
 
