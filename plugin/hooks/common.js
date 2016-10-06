@@ -26,7 +26,7 @@ exports.isAngularInstalled = function(projectData) {
 
 function calculateV8Version(runtimeVersion) {
     // TODO: Extend this logic when we publish newer V8 versions
-    return "4.7.80";
+    return "5.3.332.47";
 }
 
 exports.getAndroidRuntimeVersion = function(projectData) {
