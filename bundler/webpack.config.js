@@ -1,12 +1,13 @@
 var webpack = require("webpack");
 var path = require("path");
-var rootPath = process.argv[5];
+var rootPath = process.argv[3];
 
 module.exports = {
     context: rootPath,
     entry: {
         app: [
-            path.join(__dirname, process.argv[7]),
+            path.join(__dirname, "bundle-preamble.js"),
+            path.join(__dirname, process.argv[5]),
             path.join(__dirname, "build/bundler/require-override-warmup.js"),
         ]
     },

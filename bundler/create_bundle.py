@@ -113,14 +113,7 @@ if __name__ == "__main__":
         require_warmup.write(require_override)
 
     warmup_file = "nativescript-angular-warmup.js" if angular_bundle else "nativescript-warmup.js"
-    call(["node_modules/webpack/bin/webpack.js", "--config", "bundle.webpack.config.js",  "--root", root_path, "--warmup_file", warmup_file]);
-
-    with open("build/bundler/bundle.js", "r+b") as original_bundle:
-        bundle_data = original_bundle.read()
-
-    with open("build/bundler/bundle.js", "w+b") as modified_bundle:
-        with open("static_content.js") as static_content:
-            modified_bundle.write(static_content.read() + bundle_data)
+    call(["node_modules/webpack/bin/webpack.js", "--root", root_path, "--warmup_file", warmup_file]);
 
     call(["./minify.sh", "build/bundler/bundle.js"]);
 
