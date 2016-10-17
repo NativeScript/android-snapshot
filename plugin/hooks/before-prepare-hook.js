@@ -25,7 +25,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
 
         var currentRuntimeVersion = common.getAndroidRuntimeVersion(projectData);
         if (!currentRuntimeVersion) {
-            throw new Error("You must have the \"android\" platform installed. To do so please run \"tns platform add android\".");
+            throw new Error("In order to download a compatible V8 snapshot you must have the \"android\" platform installed - to do so please run \"tns platform add android\".");
         }
 
         if (!semver.gte(currentRuntimeVersion, MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT)) {
