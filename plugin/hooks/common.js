@@ -48,41 +48,43 @@ exports.getSnapshotPackage = function(projectData, isAngularApp) {
     return {
         originalName: packageJSON.name,
         name: packageJSON.name + "-snapshot",
-        version: packageJSON.version + "-" + calculateV8Version(runtimeVersion),
+        version: "latest-" + packageJSON.version + "-" + calculateV8Version(runtimeVersion),
     };
 };
 
-exports.isPackageInstalled = function(packageInfo) {
-    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + packageInfo.version, { silent: true });
-    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
-    if (!packageInfo.dependencies) {
-        return false;
-    }
-
-    return true;
-};
-
-exports.isPackagePublished = function(packageInfo) {
-    var proc = shelljs.exec("npm view --json " + packageInfo.name + " versions", { silent: true });
+function getSnapshotPackageTags(packageName) {
+    var proc = shelljs.exec("npm view --json " + packageName + " dist-tags", { silent: true });
     if (proc.code !== 0) {
         return false;
     }
 
-    var publishedSnapshotPackageVersions = JSON.parse(proc.stdout.toString("utf8"));
+    var result = JSON.parse(proc.stdout.toString("utf8"));
+    return result;
+}
 
-    if (typeof publishedSnapshotPackageVersions === "string") {
-        if (publishedSnapshotPackageVersions === packageInfo.version) {
-            return true;
-        }
-    } else {
-        for (var i = 0; i < publishedSnapshotPackageVersions.length; i++) {
-            if (publishedSnapshotPackageVersions[i] === packageInfo.version) {
-                return true;
-            }
-        }
+exports.isPackageInstalled = function(packageInfo) {
+    var coreVersion = packageInfo.version.replace(/^latest-/, '');
+
+    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + coreVersion, { silent: true });
+    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
+    if (packageInfo.dependencies) {
+        return true;
+    }
+
+    var publishedSnapshotPackageVersions = getSnapshotPackageTags(packageInfo.name);
+    var latestTagVersion = publishedSnapshotPackageVersions[packageInfo.version];
+    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + latestTagVersion, { silent: true });
+    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
+    if (packageInfo.dependencies) {
+        return true;
     }
 
     return false;
+};
+
+exports.isPackagePublished = function(packageInfo) {
+    var publishedSnapshotPackageVersions = getSnapshotPackageTags(packageInfo.name);
+    return !!publishedSnapshotPackageVersions[packageInfo.version];
 };
 
 exports.installPublishedPackage = function(logger, packageInfo) {
