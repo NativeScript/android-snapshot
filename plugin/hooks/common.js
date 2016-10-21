@@ -13,6 +13,10 @@ exports.isSnapshotEnabled = function(projectData, hookArgs) {
         return false;
     }
 
+    if (projectData.$options.bundle) {
+        return false;
+    }
+
     if (projectData.$options.release || process.env[exports.environmentVariableToggleKey]) {
         return true;
     }
