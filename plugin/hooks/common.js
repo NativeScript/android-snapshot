@@ -28,9 +28,16 @@ exports.isAngularInstalled = function(projectData) {
     return shelljs.test("-e", path.join(projectData.projectDir, "node_modules/nativescript-angular"));
 };
 
-function calculateV8Version(runtimeVersion) {
-    // TODO: Extend this logic when we publish newer V8 versions
-    return "5.3.332.47";
+function getV8Version(androidPlatformData) {
+    var zip = new require("adm-zip")(path.join(androidPlatformData.projectRoot, "libs/runtime-libs/nativescript.aar"));
+
+    var config = zip.readAsText("config.json");
+    if (!config) {
+        return "4.7.80";
+    }
+
+    var version = JSON.parse(config)["v8-version"];
+    return version;
 }
 
 exports.getAndroidRuntimeVersion = function(projectData) {
@@ -43,16 +50,14 @@ exports.getAndroidRuntimeVersion = function(projectData) {
     }
 };
 
-exports.getSnapshotPackage = function(projectData, isAngularApp) {
+exports.getSnapshotPackage = function(projectData, androidPlatformData, isAngularApp) {
     var packageName = isAngularApp ? "nativescript-angular" : "tns-core-modules";
     var packageJSON = JSON.parse(fs.readFileSync(path.join(projectData.projectDir, "node_modules", packageName, "package.json"), "utf8"));
-
-    var runtimeVersion = exports.getAndroidRuntimeVersion(projectData);
 
     return {
         originalName: packageJSON.name,
         name: packageJSON.name + "-snapshot",
-        version: "latest-" + packageJSON.version + "-" + calculateV8Version(runtimeVersion),
+        version: "latest-" + packageJSON.version + "-" + getV8Version(androidPlatformData),
     };
 };
 

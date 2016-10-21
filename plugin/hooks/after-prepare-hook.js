@@ -74,7 +74,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
-        var snapshotPackage = common.getSnapshotPackage(projectData, isAngularApp);
+        var snapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[hookArgs.platform], isAngularApp);
 
         // Installation has failed for some reason.
         if (!common.isPackageInstalled(snapshotPackage)) {

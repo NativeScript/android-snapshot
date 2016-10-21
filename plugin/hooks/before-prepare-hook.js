@@ -35,7 +35,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
-        var requiredSnapshotPackage = common.getSnapshotPackage(projectData, isAngularApp);
+        var requiredSnapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[hookArgs.platform], isAngularApp);
 
         if (!isAngularApp) {
             common.uninstallPackage({ name: "nativescript-angular-snapshot" });
