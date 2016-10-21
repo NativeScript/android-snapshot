@@ -21,6 +21,7 @@ function deleteNativeScriptCoreModules(projectData, platformAppDirectory) {
     var tnsModulesFolders = shelljs.ls(path.join(projectData.projectDir, "node_modules", "tns-core-modules"));
     for (var i = 0; i < tnsModulesFolders.length; i++) {
         shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", tnsModulesFolders[i]));
+        shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/tns-core-modules", tnsModulesFolders[i]));
     }
 }
 

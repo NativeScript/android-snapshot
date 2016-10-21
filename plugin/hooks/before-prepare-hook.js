@@ -13,7 +13,8 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
             if (hookArgs.platform === "android") {
                 // Force the CLI to return the deleted packages
-                if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application"))) {
+                if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) ||
+                    !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
                     shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/nativescript-angular/package.json"));
                     shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/tns-core-modules/package.json"));
                 }
