@@ -19,7 +19,8 @@ function cleanSnapshotData(platformAppDirectory, projectData) {
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     common.executeInProjectDir(projectData.projectDir, function() {
-        var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
+        var androidPlatformData = platformsData.platformsData[hookArgs.platform];
+        var platformAppDirectory = path.join(androidPlatformData.appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
             if (hookArgs.platform === "android") {
@@ -28,7 +29,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             return;
         }
 
-        var currentRuntimeVersion = common.getAndroidRuntimeVersion(projectData);
+        var currentRuntimeVersion = common.getAndroidRuntimeVersion(projectData, androidPlatformData);
         if (!currentRuntimeVersion) {
             throw new Error("In order to download a compatible V8 snapshot you must have the \"android\" platform installed - to do so please run \"tns platform add android\".");
         }
@@ -39,7 +40,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
-        var requiredSnapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[hookArgs.platform], isAngularApp);
+        var requiredSnapshotPackage = common.getSnapshotPackage(projectData, androidPlatformData, isAngularApp);
 
         if (!isAngularApp) {
             common.uninstallPackage({ name: "nativescript-angular-snapshot" });

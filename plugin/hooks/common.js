@@ -40,7 +40,11 @@ function getV8Version(androidPlatformData) {
     return version;
 }
 
-exports.getAndroidRuntimeVersion = function(projectData) {
+exports.getAndroidRuntimeVersion = function(projectData, androidPlatformData) {
+    if (!shelljs.test("-e", androidPlatformData.projectRoot)) {
+        return null;
+    }
+
     try {
         var appPackageJSON = JSON.parse(fs.readFileSync(projectData.projectFilePath, "utf8"));
         var version = appPackageJSON["nativescript"]["tns-android"]["version"];
