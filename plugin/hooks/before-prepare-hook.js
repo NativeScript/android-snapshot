@@ -6,20 +6,24 @@ var common = require("./common");
 
 var MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT = "2.1.0";
 
+function cleanSnapshotData(platformAppDirectory, projectData) {
+    // Force the CLI to return the deleted packages
+    if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) ||
+        !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
+        shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/nativescript-angular/package.json"));
+        shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/tns-core-modules/package.json"));
+    }
+
+    shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
+}
+
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     common.executeInProjectDir(projectData.projectDir, function() {
         var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
             if (hookArgs.platform === "android") {
-                // Force the CLI to return the deleted packages
-                if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) ||
-                    !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
-                    shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/nativescript-angular/package.json"));
-                    shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/tns-core-modules/package.json"));
-                }
-
-                shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
+                cleanSnapshotData(platformAppDirectory, projectData);
             }
             return;
         }
@@ -47,9 +51,12 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             logger.warn("Required heap snapshot package is not installed. Installing \"" + requiredSnapshotPackage.name + "@" + requiredSnapshotPackage.version + "\".");
 
             if (!common.isPackagePublished(requiredSnapshotPackage)) {
-                var dispatcherPluginName = require("../package.json").name;
-                throw new Error("Could not find package \"" + requiredSnapshotPackage.name + "@" + requiredSnapshotPackage.version + "\" in the registry.\n" +
-                    "You can install it manually or remove the \"" + dispatcherPluginName + "\" plugin and continue building without heap snapshots.");
+                logger.warn("Could not find package \"" + requiredSnapshotPackage.name + "@" + requiredSnapshotPackage.version + "\" in the registry.\n" +
+                    "Build will now continue without using heap snapshots ...");
+
+                cleanSnapshotData(platformAppDirectory, projectData);
+
+                return;
             }
 
             common.installPublishedPackage(logger, requiredSnapshotPackage);
