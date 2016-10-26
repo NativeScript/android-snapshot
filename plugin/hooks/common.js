@@ -29,7 +29,13 @@ exports.isAngularInstalled = function(projectData) {
 };
 
 function getV8Version(androidPlatformData) {
-    var zip = new require("adm-zip")(path.join(androidPlatformData.projectRoot, "libs/runtime-libs/nativescript.aar"));
+    var nativescriptLibraryPath = path.join(androidPlatformData.projectRoot, "libs/runtime-libs/nativescript-regular.aar");
+
+    if (!shelljs.test("-e", nativescriptLibraryPath)) {
+        nativescriptLibraryPath = path.join(androidPlatformData.projectRoot, "libs/runtime-libs/nativescript.aar")
+    }
+
+    var zip = new require("adm-zip")(nativescriptLibraryPath);
 
     var config = zip.readAsText("config.json");
     if (!config) {
