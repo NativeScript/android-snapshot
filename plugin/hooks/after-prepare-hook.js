@@ -51,12 +51,16 @@ function deleteBundledFiles(pluginDirectory, platformAppDirectory) {
     }
 }
 
-function copySnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
+function prepareSnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
     shelljs.cp(path.join(pluginDirectory, "platforms/android-snapshot-files/_embedded_script_.js"), platformAppDirectory);
     shelljs.cp(path.join(pluginDirectory, "platforms/android-snapshot-files/tns-java-classes.js"), platformAppDirectory);
 
     shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
-    shelljs.cp("-r", path.join(pluginDirectory, "platforms/android-snapshot-files/snapshots"), path.join(platformAppDirectory, ".."));
+    var snapshotBlobs = path.join(pluginDirectory, "platforms/android-snapshot-files/snapshots")
+    if (shelljs.test("-e", snapshotBlobs)) {
+        shelljs.cp("-r", snapshotBlobs, path.join(platformAppDirectory, ".."));
+        addSnapshotKeyInPackageJSON(path.join(platformAppDirectory, "package.json"));
+    }
 }
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
@@ -93,8 +97,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
 
         shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", "shelljs"));
 
-        copySnapshotPluginFiles(pluginDirectory, platformAppDirectory);
-        addSnapshotKeyInPackageJSON(path.join(platformAppDirectory, "package.json"));
+        prepareSnapshotPluginFiles(pluginDirectory, platformAppDirectory);
 
         if (isAngularApp) {
             logger.warn("The \"nativescript-angular\" and \"tns-core-modules\" packages and their dependencies have been deleted from the final assets.");
