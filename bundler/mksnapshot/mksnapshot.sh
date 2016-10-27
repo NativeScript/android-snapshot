@@ -9,18 +9,25 @@ OUTPUT_DIR="$2"
 
 echo "Generating snapshot for \"$SCRIPT\" in \"$OUTPUT_DIR\" ..."
 
-echo "***** Generating ARM *****"
-mkdir -p "$OUTPUT_DIR/armeabi-v7a/"
-./mksnapshot-arm "$SCRIPT" --startup_blob "$OUTPUT_DIR/armeabi-v7a/snapshot.blob" $V8_FLAGS
+function generate_snapshot {
+    local ARCH="$1"
+    local V8_ARCH="$2"
 
-echo "***** Generating ARM64 *****"
-mkdir -p "$OUTPUT_DIR/arm64-v8a/"
-./mksnapshot-arm64 "$SCRIPT" --startup_blob "$OUTPUT_DIR/arm64-v8a/snapshot.blob" $V8_FLAGS
+    echo "***** Generating $ARCH *****"
+    mkdir -p "$OUTPUT_DIR/$ARCH/"
+    ./mksnapshot-$V8_ARCH "$SCRIPT" --startup_blob "$OUTPUT_DIR/$ARCH/TNSSnapshot.blob" $V8_FLAGS
 
-echo "***** Generating x86 *****"
-mkdir -p "$OUTPUT_DIR/x86/"
-./mksnapshot-x86 "$SCRIPT" --startup_blob "$OUTPUT_DIR/x86/snapshot.blob" $V8_FLAGS
+    pushd "$OUTPUT_DIR/$ARCH"
+    xxd -i "TNSSnapshot.blob" > "TNSSnapshot.c"
+    rm "TNSSnapshot.blob"
+    popd
+}
+
+generate_snapshot "armeabi-v7a" "arm"
+generate_snapshot "arm64-v8a" "arm64"
+generate_snapshot "x86" "x86"
 
 du -bh $OUTPUT_DIR
 
 echo "Finished generating snapshots."
+
