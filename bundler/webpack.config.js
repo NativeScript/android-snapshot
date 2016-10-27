@@ -21,7 +21,8 @@ module.exports = {
         extensions: ["", ".js"],
         packageMains: ["main"],
         modulesDirectories: [
-            "tns_modules"
+            "tns_modules",
+            "node_modules"
         ]
     },
     plugins: [
