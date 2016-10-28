@@ -46,8 +46,6 @@ def add_angular_dependencies(path_map):
     path_map.append('        "@angular/platform-browser/": function() { return require("@angular/platform-browser") },\n');
     path_map.append('        "@angular/platform-browser-dynamic": function() { return require("@angular/platform-browser-dynamic") },\n');
     path_map.append('        "@angular/platform-browser-dynamic/": function() { return require("@angular/platform-browser-dynamic") },\n');
-    path_map.append('        "@angular/platform-server": function() { return require("@angular/platform-server") },\n');
-    path_map.append('        "@angular/platform-server/": function() { return require("@angular/platform-server") },\n');
     path_map.append('        "@angular/router": function() { return require("@angular/router") },\n');
     path_map.append('        "@angular/router/": function() { return require("@angular/router") },\n');
 
@@ -62,7 +60,6 @@ def generate_require_override():
         "@angular/http",
         "@angular/platform-browser",
         "@angular/platform-browser-dynamic",
-        "@angular/platform-server",
         "@angular/router",
         "parse5",
         "rxjs/bundles",
