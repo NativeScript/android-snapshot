@@ -17,7 +17,10 @@ module.exports = {
         filename: "bundle.js"
     },
     resolve: {
-        root: rootPath,
+        root: [
+            rootPath,
+            path.join(rootPath, "tns-core-modules")
+        ],
         extensions: ["", ".js"],
         packageMains: ["main"],
         modulesDirectories: [
