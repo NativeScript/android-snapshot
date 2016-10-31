@@ -30,6 +30,7 @@ function deleteAngularModules(projectData, platformAppDirectory) {
     for (var i = 0; i < angularDependencies.length; i++) {
         if (/^@angular\//.test(angularDependencies[i])) {
             shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularDependencies[i]));
+            shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules/nativescript-angular/node_modules", angularDependencies[i]));
         }
     }
 
