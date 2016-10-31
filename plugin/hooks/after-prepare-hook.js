@@ -64,16 +64,17 @@ function prepareSnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
 }
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
+    var platformName = hookArgs.platform.toLowerCase();
+
+    if (platformName !== "android") {
+        return;
+    }
+
     common.executeInProjectDir(projectData.projectDir, function() {
-
-        if (hookArgs.platform !== "android") {
-            return;
-        }
-
-        var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
+        var platformAppDirectory = path.join(platformsData.platformsData[platformName].appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-            if (hookArgs.platform === "android") {
+            if (platformName === "android") {
                 // TODO: Fix this in the CLI if possible
                 if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
                     !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules", "@angular/core"))) {
@@ -84,7 +85,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
-        var snapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[hookArgs.platform], isAngularApp);
+        var snapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[platformName], isAngularApp);
 
         // Installation has failed for some reason.
         if (!common.isPackageInstalled(snapshotPackage)) {

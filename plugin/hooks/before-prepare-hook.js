@@ -32,17 +32,18 @@ function restoreSnapshotLibs(projectData, snapshotPackageName) {
 }
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
+    var platformName = hookArgs.platform.toLowerCase();
+
+    if (platformName !== "android") {
+        return;
+    }
+
     common.executeInProjectDir(projectData.projectDir, function() {
-
-        if (hookArgs.platform !== "android") {
-            return;
-        }
-
-        var androidPlatformData = platformsData.platformsData[hookArgs.platform];
+        var androidPlatformData = platformsData.platformsData[platformName];
         var platformAppDirectory = path.join(androidPlatformData.appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-            if (hookArgs.platform === "android") {
+            if (platformName === "android") {
                 cleanSnapshotData(platformAppDirectory, projectData, "tns-core-modules-snapshot");
                 cleanSnapshotData(platformAppDirectory, projectData, "nativescript-angular-snapshot");
             }
