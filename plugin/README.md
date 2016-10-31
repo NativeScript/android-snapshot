@@ -19,7 +19,7 @@ Optionally, this behavior can also be controlled by the `TNS_ANDROID_SNAPSHOT` e
 
 When the `android-snapshot` plugin is activated, it will check whether the application is using Angular or not. Depending on that it will install either the `tns-core-modules-snapshot` package or the `nativescript-angular-snapshot` package (which includes the `tns-core-modules` + `@angular`). The specific version of this package will be determined by the original package version and the V8 version used in the currently installed Android Runtime.
 
-> **Example:** If you have `tns-core-modules@2.0.1` and `tns-android@2.1` installed (which comes with V8 4.7.80), the `android-snapshot` plugin will search for and download the `tns-core-modules-snapshot@2.0.1-4.7.80` package (if not already manually installed).
+> **Example:** If you have `tns-core-modules@2.0.1` and `tns-android@2.1` installed (which comes with V8 4.7.80), the `android-snapshot` plugin will search for and download the `tns-core-modules-snapshot@latest-2.0.1-4.7.80` package (if not already manually installed).
 
 Each of these packages has the following structure:
 ```
