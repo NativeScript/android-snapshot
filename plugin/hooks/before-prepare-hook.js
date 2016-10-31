@@ -33,6 +33,11 @@ function restoreSnapshotLibs(projectData, snapshotPackageName) {
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     common.executeInProjectDir(projectData.projectDir, function() {
+
+        if (hookArgs.platform !== "android") {
+            return;
+        }
+
         var androidPlatformData = platformsData.platformsData[hookArgs.platform];
         var platformAppDirectory = path.join(androidPlatformData.appDestinationDirectoryPath, "app");
 
