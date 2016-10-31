@@ -6,7 +6,7 @@ var common = require("./common");
 
 var MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT = "2.1.0";
 
-function cleanSnapshotData(platformAppDirectory, projectData) {
+function cleanSnapshotData(platformAppDirectory, projectData, snapshotPackageName) {
     // Force the CLI to return the deleted packages
     if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) ||
         !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
@@ -15,6 +15,20 @@ function cleanSnapshotData(platformAppDirectory, projectData) {
     }
 
     shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
+
+    var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackageName);
+    var pluginLibsPath = path.join(pluginDirectory, "platforms/android/jniLibs")
+    if (shelljs.test("-e", pluginLibsPath)) {
+        shelljs.mv("-f", pluginLibsPath, path.join(path.join(pluginDirectory, "platforms/android/jniLibs-ignore")));
+    }
+}
+
+function restoreSnapshotLibs(projectData, snapshotPackageName) {
+    var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackageName);
+    var pluginLibsIgnoredPath = path.join(pluginDirectory, "platforms/android/jniLibs-ignore")
+    if (shelljs.test("-e", pluginLibsIgnoredPath)) {
+        shelljs.mv("-f", pluginLibsIgnoredPath, path.join(path.join(pluginDirectory, "platforms/android/jniLibs")));
+    }
 }
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
@@ -24,7 +38,8 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
             if (hookArgs.platform === "android") {
-                cleanSnapshotData(platformAppDirectory, projectData);
+                cleanSnapshotData(platformAppDirectory, projectData, "tns-core-modules-snapshot");
+                cleanSnapshotData(platformAppDirectory, projectData, "nativescript-angular-snapshot");
             }
             return;
         }
@@ -55,12 +70,14 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
                 logger.warn("Could not find package \"" + requiredSnapshotPackage.name + "@" + requiredSnapshotPackage.version + "\" in the registry.\n" +
                     "Build will now continue without using heap snapshots ...");
 
-                cleanSnapshotData(platformAppDirectory, projectData);
+                cleanSnapshotData(platformAppDirectory, projectData, requiredSnapshotPackage.name);
 
                 return;
             }
 
             common.installPublishedPackage(logger, requiredSnapshotPackage);
         }
+
+        restoreSnapshotLibs(projectData, requiredSnapshotPackage.name);
     });
 };
