@@ -65,6 +65,11 @@ function prepareSnapshotPluginFiles(pluginDirectory, platformAppDirectory) {
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     common.executeInProjectDir(projectData.projectDir, function() {
+
+        if (hookArgs.platform !== "android") {
+            return;
+        }
+
         var platformAppDirectory = path.join(platformsData.platformsData[hookArgs.platform].appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
