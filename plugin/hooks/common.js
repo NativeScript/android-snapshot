@@ -107,14 +107,14 @@ exports.isPackagePublished = function(packageInfo) {
 };
 
 exports.installPublishedPackage = function(logger, packageInfo) {
-    var proc = shelljs.exec("npm install " + packageInfo.name + "@" + packageInfo.version, { silent: true });
+    var proc = shelljs.exec("npm install " + packageInfo.name + "@" + packageInfo.version + " --save --save-exact", { silent: true });
     if (proc.code !== 0) {
         throw new Error("Failed to install package \"" + packageInfo.name + "@" + packageInfo.version + "\".");
     }
 };
 
 exports.uninstallPackage = function(packageInfo) {
-    shelljs.exec("npm uninstall " + packageInfo.name, { silent: true });
+    shelljs.exec("npm uninstall " + packageInfo.name + " --save", { silent: true });
 };
 
 // This is required to ensure that all npm operations are executed in the project directory.
