@@ -55,9 +55,12 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             throw new Error("In order to download a compatible V8 snapshot you must have the \"android\" platform installed - to do so please run \"tns platform add android\".");
         }
 
-        if (!semver.gte(currentRuntimeVersion, MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT)) {
-            throw new Error("In order to support heap snapshots, you must have at least tns-android@" + MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT +
-                " installed. Current Android Runtime version is: " + currentRuntimeVersion + ".");
+        // The version could be "next"
+        if (semver.valid(currentRuntimeVersion)) {
+            if (!semver.gte(currentRuntimeVersion, MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT)) {
+                throw new Error("In order to support heap snapshots, you must have at least tns-android@" + MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT +
+                    " installed. Current Android Runtime version is: " + currentRuntimeVersion + ".");
+            }
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
