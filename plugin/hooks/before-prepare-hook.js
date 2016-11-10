@@ -14,6 +14,7 @@ function cleanSnapshotData(platformAppDirectory, projectData, snapshotPackageNam
         shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/tns-core-modules/package.json"));
     }
 
+    shelljs.rm("-rf", path.join(platformAppDirectory, "_embedded_script_.js"));
     shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
 
     var pluginDirectory = path.join(projectData.projectDir, "node_modules", snapshotPackageName);
