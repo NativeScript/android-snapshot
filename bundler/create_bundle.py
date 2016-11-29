@@ -61,6 +61,7 @@ def generate_require_override():
         "@angular/platform-browser",
         "@angular/platform-browser-dynamic",
         "@angular/router",
+        "nativescript-angular/node_modules/@angular",
         "parse5",
         "rxjs/bundles",
         "rxjs/testing",
