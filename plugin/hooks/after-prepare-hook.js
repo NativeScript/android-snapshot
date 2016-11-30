@@ -74,7 +74,8 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         var platformAppDirectory = path.join(platformsData.platformsData[platformName].appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-            if (platformName === "android") {
+            var bundle = projectData.$options.bundle;
+            if (platformName === "android" && !bundle) {
                 // TODO: Fix this in the CLI if possible
                 if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
                     !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules", "@angular/core"))) {
