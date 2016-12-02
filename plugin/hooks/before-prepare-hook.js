@@ -35,7 +35,7 @@ function restoreSnapshotLibs(projectData, snapshotPackageName) {
 module.exports = function(logger, platformsData, projectData, hookArgs) {
     var platformName = hookArgs.platform.toLowerCase();
 
-    if (platformName !== "android") {
+    if (platformName !== "android" && !projectData.$options.release) {
         return;
     }
 
