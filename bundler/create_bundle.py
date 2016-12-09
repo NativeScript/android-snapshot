@@ -48,6 +48,8 @@ def add_angular_dependencies(path_map):
     path_map.append('        "@angular/platform-browser-dynamic/": function() { return require("@angular/platform-browser-dynamic") },\n');
     path_map.append('        "@angular/router": function() { return require("@angular/router") },\n');
     path_map.append('        "@angular/router/": function() { return require("@angular/router") },\n');
+    path_map.append('        "nativescript-angular": function() { return require("nativescript-angular") },\n');
+    path_map.append('        "nativescript-intl": function() { return require("nativescript-intl") },\n');
 
 def generate_require_override():
     path_map = []
@@ -61,7 +63,8 @@ def generate_require_override():
         "@angular/platform-browser",
         "@angular/platform-browser-dynamic",
         "@angular/router",
-        "nativescript-angular/node_modules/@angular",
+        "nativescript-angular",
+        "nativescript-intl",
         "parse5",
         "rxjs/bundles",
         "rxjs/testing",
