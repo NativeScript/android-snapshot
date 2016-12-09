@@ -85,8 +85,8 @@ exports.isPackageInstalled = function(packageInfo) {
     var coreVersion = packageInfo.version.replace(/^latest-/, '');
 
     var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + coreVersion, { silent: true });
-    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
-    if (packageInfo.dependencies) {
+    var localPackageInfo = JSON.parse(proc.stdout.toString("utf8"));
+    if (localPackageInfo.dependencies) {
         return true;
     }
 
