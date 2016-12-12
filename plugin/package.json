@@ -1,6 +1,6 @@
 {
   "name": "nativescript-dev-android-snapshot",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "Apache-2.0",
   "dependencies": {
     "adm-zip": "^0.4.7",
