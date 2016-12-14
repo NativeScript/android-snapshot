@@ -8,11 +8,7 @@ var MIN_ANDROID_RUNTIME_VERSION_WITH_SNAPSHOT_SUPPORT = "2.1.0";
 
 function cleanSnapshotData(platformAppDirectory, projectData, snapshotPackageName) {
     // Force the CLI to return the deleted packages
-    if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) ||
-        !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
-        shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/nativescript-angular/package.json"));
-        shelljs.touch("-c", path.join(projectData.projectDir, "node_modules/tns-core-modules/package.json"));
-    }
+    common.prepareDeletedModules(platformAppDirectory, projectData.projectDir);
 
     shelljs.rm("-rf", path.join(platformAppDirectory, "_embedded_script_.js"));
     shelljs.rm("-rf", path.join(platformAppDirectory, "../snapshots"));
