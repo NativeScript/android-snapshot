@@ -4,6 +4,14 @@ var shelljs = require("shelljs");
 
 exports.environmentVariableToggleKey = "TNS_ANDROID_SNAPSHOT";
 
+exports.prepareDeletedModules = function(platformAppDirectory, projectDir) {
+    if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) &&
+        !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
+        shelljs.touch("-c", path.join(projectDir, "node_modules/nativescript-angular/package.json"));
+        shelljs.touch("-c", path.join(projectDir, "node_modules/tns-core-modules/package.json"));
+    }
+};
+
 exports.isSnapshotEnabled = function(projectData, hookArgs) {
     if (hookArgs.platform !== "android") {
         return false;
