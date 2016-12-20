@@ -8,25 +8,28 @@ from subprocess import call
 
 angular_bundle = False
 
+def strip_modules_folder(path):
+    return path if not path.startswith("tns-core-modules/") else path[len("tns-core-modules/"):];
+
 def generate_require_statement(basePath, relativeRootPath, file):
     path_map = []
     relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
     absolutePath = basePath + "/" + relativePath;
 
     if file.endswith("/index.js"):
-        path_map.append('        "' + relativePath[:-len("/index.js")] + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + relativePath[:-len("index.js")] + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len("/index.js")]) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len("index.js")]) + '": function() { return require("' + relativePath + '") },\n');
 
     if file.endswith(".js"):
-        path_map.append('        "' + relativePath[:-len(".js")] + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + relativePath + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len(".js")]) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath) + '": function() { return require("' + relativePath + '") },\n');
     elif file == "package.json":
         with open(absolutePath) as data_file:
             data = json.load(data_file)
 
         if "main" in data:
-            path_map.append('        "' + relativeRootPath + '": function() { return require("' + relativeRootPath + '") },\n')
-            path_map.append('        "' + relativeRootPath + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append('        "' + strip_modules_folder(relativeRootPath) + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append('        "' + strip_modules_folder(relativeRootPath) + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
 
     return path_map
 
