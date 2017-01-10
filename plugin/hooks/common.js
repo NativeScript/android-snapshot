@@ -100,9 +100,14 @@ exports.isPackageInstalled = function(packageInfo) {
 
     var publishedSnapshotPackageVersions = getSnapshotPackageTags(packageInfo.name);
     var latestTagVersion = publishedSnapshotPackageVersions[packageInfo.version];
-    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + latestTagVersion, { silent: true });
-    var packageInfo = JSON.parse(proc.stdout.toString("utf8"));
-    if (packageInfo.dependencies) {
+
+    if (!latestTagVersion) {
+        return false;
+    }
+
+    proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + latestTagVersion, { silent: true });
+    localPackageInfo = JSON.parse(proc.stdout.toString("utf8"));
+    if (localPackageInfo.dependencies) {
         return true;
     }
 
