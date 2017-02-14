@@ -1,18 +1,20 @@
 var webpack = require("webpack");
 var path = require("path");
 var rootPath = process.argv[3];
+var warmupFile = process.argv[5];
+var destDir = process.argv[7];
 
 module.exports = {
     context: rootPath,
     entry: {
         app: [
             path.join(__dirname, "bundle-preamble.js"),
-            path.join(__dirname, process.argv[5]),
-            path.join(__dirname, "build/bundler/require-override-warmup.js"),
+            path.join(__dirname, warmupFile),
+            path.join(destDir, "require-override-warmup.js"),
         ]
     },
     output: {
-        path: path.join(__dirname, "build/bundler"),
+        path: destDir,
         pathinfo: true,
         filename: "bundle.js"
     },
@@ -41,5 +43,5 @@ module.exports = {
         __dirname: false,
         setImmediate: false
     },
-    recordsPath: path.join(__dirname, "build/bundler", "bundle.records.json")
+    recordsPath: path.join(destDir, "bundle.records.json")
 };

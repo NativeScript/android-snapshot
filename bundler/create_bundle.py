@@ -8,8 +8,14 @@ from subprocess import call
 
 angular_bundle = False
 
+def strip_begining(beginning, str):
+    return str if not str.startswith(beginning) else str[len(beginning):];
+
 def strip_modules_folder(path):
-    return path if not path.startswith("tns-core-modules/") else path[len("tns-core-modules/"):];
+    return strip_begining("/tns-core-modules/", path);
+
+def strip_slash(path):
+    return strip_begining("/", path);
 
 def generate_require_statement(basePath, relativeRootPath, file):
     path_map = []
@@ -17,19 +23,19 @@ def generate_require_statement(basePath, relativeRootPath, file):
     absolutePath = basePath + "/" + relativePath;
 
     if file.endswith("/index.js"):
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len("/index.js")]) + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len("index.js")]) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len("/index.js")]) + '": function() { return require("' + strip_slash(relativePath) + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len("index.js")]) + '": function() { return require("' + strip_slash(relativePath) + '") },\n');
 
     if file.endswith(".js"):
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len(".js")]) + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + strip_modules_folder(relativePath) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath[:-len(".js")]) + '": function() { return require("' + strip_slash(relativePath) + '") },\n');
+        path_map.append('        "' + strip_modules_folder(relativePath) + '": function() { return require("' + strip_slash(relativePath) + '") },\n');
     elif file == "package.json":
         with open(absolutePath) as data_file:
             data = json.load(data_file)
 
         if "main" in data:
-            path_map.append('        "' + strip_modules_folder(relativeRootPath) + '": function() { return require("' + relativeRootPath + '") },\n')
-            path_map.append('        "' + strip_modules_folder(relativeRootPath) + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append('        "' + strip_modules_folder(relativeRootPath) + '": function() { return require("' + strip_slash(relativeRootPath) + '") },\n')
+            path_map.append('        "' + strip_modules_folder(relativeRootPath) + "/" + '": function() { return require("' + strip_slash(relativeRootPath) + '") },\n')
 
     return path_map
 
@@ -56,22 +62,22 @@ def generate_require_override():
     path_map = []
     rootPath = sys.argv[1]
     exclude = set([
-        "@angular/common",
-        "@angular/compiler",
-        "@angular/core",
-        "@angular/forms",
-        "@angular/http",
-        "@angular/platform-browser",
-        "@angular/platform-browser-dynamic",
-        "@angular/router",
-        "nativescript-angular/node_modules/@angular",
-        "parse5",
-        "rxjs/bundles",
-        "rxjs/testing",
-        "querystring/test",
-        "reflect-metadata/test",
-        "reflect-metadata/temp",
-        "symbol-observable/es",
+        "/@angular/common",
+        "/@angular/compiler",
+        "/@angular/core",
+        "/@angular/forms",
+        "/@angular/http",
+        "/@angular/platform-browser",
+        "/@angular/platform-browser-dynamic",
+        "/@angular/router",
+        "/nativescript-angular/node_modules/@angular",
+        "/parse5",
+        "/rxjs/bundles",
+        "/rxjs/testing",
+        "/querystring/test",
+        "/reflect-metadata/test",
+        "/reflect-metadata/temp",
+        "/symbol-observable/es",
     ])
 
     if angular_bundle:
@@ -100,22 +106,28 @@ if __name__ == "__main__":
         sys.exit(2)
 
     root_path = sys.argv[1]
+    dest_path = sys.argv[2]
 
-    if not os.path.exists("build/bundler"):
-        os.makedirs("build/bundler")
+    shutil.rmtree(dest_path, ignore_errors=True)
+    if not os.path.exists(dest_path):
+        os.makedirs(dest_path)
 
-    if len(sys.argv) == 3 and sys.argv[2] == "--ng":
+    if len(sys.argv) == 4 and sys.argv[3] == "--ng":
         print "Creating Angular bundle"
         angular_bundle = True
 
     require_override = generate_require_override()
 
-    with open("build/bundler/require-override-warmup.js", "w+b") as require_warmup:
+    with open(os.path.join(dest_path, "require-override-warmup.js"), "w+b") as require_warmup:
         require_warmup.write(require_override)
 
     warmup_file = "nativescript-angular-warmup.js" if angular_bundle else "nativescript-warmup.js"
-    call(["node_modules/webpack/bin/webpack.js", "--root", root_path, "--warmup_file", warmup_file]);
+    call(["../../webpack/bin/webpack.js", 
+    "--root", root_path, # root path 
+    "--warmup", warmup_file, # warmup file
+    "--dest", dest_path # bundle destination directory
+    ]);
 
-    call(["./minify.sh", "build/bundler/bundle.js"]);
+    call(["./minify.sh", os.path.join(dest_path, "bundle.js")]);
 
-    print "Successfully created build/bundler/bundle.js"
+    print "Successfully created " + os.path.join(dest_path, "bundle.js")

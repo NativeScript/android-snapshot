@@ -1,9 +1,0 @@
-{
-  "name": "nativescript-snapshot-bundler",
-  "version": "0.0.1",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "uglify-js": "mishoo/UglifyJS2#harmony",
-    "webpack": "1.12.14"
-  }
-}
