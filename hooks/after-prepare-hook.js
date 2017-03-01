@@ -107,7 +107,7 @@ function generateWebpackBundle(paths, isAngularApp) {
     });
 }
 
-function generateSnapshots(paths) {
+function generateSnapshots(paths, logger) {
     if (!shelljs.test("-e", paths.pluginMksnapshotCurrent)) {
         throw new Error("Looking for mksnapshot tools at " + paths.pluginMksnapshotCurrent + " but can't find them there.");
     }
@@ -115,7 +115,9 @@ function generateSnapshots(paths) {
     // Make *.blob and *.c files with the mksnapshot tool
     common.executeInDir(paths.pluginMksnapshotCurrent, function(){
         shelljs.rm("-rf", paths.pluginArtefactsMksnapshot);
-        shelljs.exec(paths.pluginMksnapshotShellScript + " " + path.join(paths.pluginArtefactsWebpack, "_embedded_script_.js") + " " + paths.pluginArtefactsMksnapshot);
+        var output = shelljs.exec(paths.pluginMksnapshotShellScript + " " + path.join(paths.pluginArtefactsWebpack, "_embedded_script_.js") + " " + paths.pluginArtefactsMksnapshot);
+        logger.info(output.stdout);
+        logger.error(output.stderr);
     });
 }
 
@@ -175,7 +177,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         ensureTnsCoreModulesArePrepared(paths);
         generateWebpackBundle(paths, isAngularApp);
         deleteWebpackedModules(paths, logger);
-        generateSnapshots(paths); // generates .blob and .c files
+        generateSnapshots(paths, logger); // generates .blob and .c files
 
         // _embedded_script_.js is packed in the .apk because it is needed by the metadata generator
         shelljs.cp(path.join(paths.pluginArtefactsWebpack, "_embedded_script_.js"), paths.platformApp);
