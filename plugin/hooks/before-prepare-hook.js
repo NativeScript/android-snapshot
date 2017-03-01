@@ -36,7 +36,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
     }
 
     common.executeInProjectDir(projectData.projectDir, function() {
-        var androidPlatformData = platformsData.platformsData[platformName];
+        var androidPlatformData = platformsData.getPlatformData(platformName);
         var platformAppDirectory = path.join(androidPlatformData.appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {

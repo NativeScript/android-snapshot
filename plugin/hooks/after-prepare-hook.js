@@ -71,7 +71,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
     }
 
     common.executeInProjectDir(projectData.projectDir, function() {
-        var platformAppDirectory = path.join(platformsData.platformsData[platformName].appDestinationDirectoryPath, "app");
+        var platformAppDirectory = path.join(platformsData.getPlatformData(platformName).appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
             var bundle = projectData.$options.bundle;
@@ -86,7 +86,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         }
 
         var isAngularApp = common.isAngularInstalled(projectData);
-        var snapshotPackage = common.getSnapshotPackage(projectData, platformsData.platformsData[platformName], isAngularApp);
+        var snapshotPackage = common.getSnapshotPackage(projectData, platformsData.getPlatformData(platformName), isAngularApp);
 
         // Installation has failed for some reason.
         if (!common.isPackageInstalled(snapshotPackage)) {
