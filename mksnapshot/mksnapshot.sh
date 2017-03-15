@@ -30,7 +30,7 @@ function generate_snapshot {
 
 generate_snapshot "armeabi-v7a" "arm"
 generate_snapshot "arm64-v8a" "arm64"
-generate_snapshot "x86" "x86"
+generate_snapshot "x86" "ia32"
 
 echo "Finished generating snapshots."
 
