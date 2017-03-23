@@ -13,19 +13,23 @@ exports.prepareDeletedModules = function(platformAppDirectory, projectDir) {
 };
 
 exports.isSnapshotEnabled = function(projectData, hookArgs) {
-    if (hookArgs.platform !== "android") {
+    var isAndroidPlatform = hookArgs && hookArgs.platform && hookArgs.platform.toLowerCase() === "android";
+    if (!isAndroidPlatform) {
         return false;
     }
+
+    var isReleaseBuild = hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.release : projectData.$options.release;
+    var shouldBundle = hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.bundle : projectData.$options.bundle;
 
     if (process.env[exports.environmentVariableToggleKey] === "0") {
         return false;
     }
 
-    if (projectData.$options.bundle) {
+    if (shouldBundle) {
         return false;
     }
 
-    if (projectData.$options.release || process.env[exports.environmentVariableToggleKey]) {
+    if (isReleaseBuild || process.env[exports.environmentVariableToggleKey]) {
         return true;
     }
 
