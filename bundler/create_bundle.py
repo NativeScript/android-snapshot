@@ -8,28 +8,37 @@ from subprocess import call
 
 angular_bundle = False
 
-def strip_modules_folder(path):
-    return path if not path.startswith("tns-core-modules/") else path[len("tns-core-modules/"):];
+def create_map_line(key, value):
+    return '        "{0}": function() {{ return require("{1}") }},\n'.format(key, value);
 
-def generate_require_statement(basePath, relativeRootPath, file):
+def generate_require_statement(basePath, relativeRootPath, file, stripTnsCoreModulesKeyName = False):
     path_map = []
+    if not stripTnsCoreModulesKeyName and (relativeRootPath.startswith("tns-core-modules/") or relativeRootPath == "tns-core-modules"):
+        path_map = generate_require_statement(basePath, relativeRootPath, file, True)
     relativePath = os.path.join(relativeRootPath, file).replace("\\", '/');
-    absolutePath = basePath + "/" + relativePath;
+    absolutePath = basePath + relativePath;
+    def key(k):
+        if stripTnsCoreModulesKeyName:
+            if k.startswith("tns-core-modules/"):
+                return k[len("tns-core-modules/"):]
+            elif k == "tns-core-modules":
+                return ""
+        return k
 
     if file.endswith("/index.js"):
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len("/index.js")]) + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len("index.js")]) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append(create_map_line(key(relativePath[:-len("/index.js")]), relativePath))
+        path_map.append(create_map_line(key(relativePath[:-len("index.js")]), relativePath))
 
     if file.endswith(".js"):
-        path_map.append('        "' + strip_modules_folder(relativePath[:-len(".js")]) + '": function() { return require("' + relativePath + '") },\n');
-        path_map.append('        "' + strip_modules_folder(relativePath) + '": function() { return require("' + relativePath + '") },\n');
+        path_map.append(create_map_line(key(relativePath[:-len(".js")]), relativePath))
+        path_map.append(create_map_line(key(relativePath), relativePath))
     elif file == "package.json":
         with open(absolutePath) as data_file:
             data = json.load(data_file)
 
         if "main" in data:
-            path_map.append('        "' + strip_modules_folder(relativeRootPath) + '": function() { return require("' + relativeRootPath + '") },\n')
-            path_map.append('        "' + strip_modules_folder(relativeRootPath) + "/" + '": function() { return require("' + relativeRootPath + '") },\n')
+            path_map.append(create_map_line(key(relativeRootPath), relativeRootPath))
+            path_map.append(create_map_line(key(relativeRootPath + "/"), relativeRootPath))
 
     return path_map
 
