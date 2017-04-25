@@ -26,7 +26,14 @@ function deleteNativeScriptCoreModules(projectData, platformAppDirectory) {
 }
 
 function deleteAngularModules(projectData, platformAppDirectory) {
-    var angularDependencies = Object.keys(JSON.parse(fs.readFileSync(path.join(projectData.projectDir, "node_modules", "nativescript-angular/package.json"), "utf8"))["dependencies"]);
+    var nativeScriptAngularPackageJson = JSON.parse(fs.readFileSync(path.join(projectData.projectDir, "node_modules", "nativescript-angular/package.json"), "utf8"));
+    var dependencies = nativeScriptAngularPackageJson["dependencies"];
+    if (nativeScriptAngularPackageJson["peerDependencies"]) {
+        for (var peerDep in nativeScriptAngularPackageJson["peerDependencies"]) { 
+            dependencies[peerDep] = nativeScriptAngularPackageJson["peerDependencies"][peerDep]; 
+        }
+    }
+    var angularDependencies = Object.keys(dependencies);
     for (var i = 0; i < angularDependencies.length; i++) {
         if (/^@angular\//.test(angularDependencies[i])) {
             shelljs.rm("-rf", path.join(platformAppDirectory, "tns_modules", angularDependencies[i]));
