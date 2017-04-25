@@ -1,5 +1,6 @@
 var hook = require('nativescript-hook')(__dirname);
-var common = require('./hooks/common');
+var cleanPlatformFolder = require("../snapshot-webpack-plugin").cleanPlatformFolder;
 
-common.cleanPlatformsFolder(common.paths(hook.findProjectDir()));
+// Clean all snapshot artefacts from the platform folder
+cleanPlatformFolder(hook.findProjectDir());
 hook.preuninstall();

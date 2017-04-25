@@ -1,10 +1,7 @@
-var common = require("./common");
+var cleanPlatformFolder = require("../snapshot-webpack-plugin").cleanPlatformFolder;
 
 module.exports = function(logger, platformsData, projectData, hookArgs) {
-    if (hookArgs.platform.toLowerCase() !== "android")
-        return;
-
-    var paths = common.paths(projectData.projectDir);
-    common.cleanPlatformsFolder(paths);
-    common.cleanPluginBuildFolder(paths);
+    // Clean all snapshot artefacts from the platform folder
+    if (hookArgs.platform.toLowerCase() === "android")
+        cleanPlatformFolder(projectData.projectDir);
 };

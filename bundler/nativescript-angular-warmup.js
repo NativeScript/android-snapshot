@@ -1,1 +1,0 @@
-require("nativescript-angular/platform");

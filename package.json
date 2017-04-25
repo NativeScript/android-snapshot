@@ -2,13 +2,12 @@
   "name": "nativescript-dev-android-snapshot",
   "version": "0.0.7",
   "license": "Apache-2.0",
+  "main": "snapshot-helpers",
   "dependencies": {
     "adm-zip": "^0.4.7",
     "nativescript-hook": "^0.2.1",
     "semver": "^5.1.0",
-    "shelljs": "^0.6.0",
-    "uglify-js": "mishoo/UglifyJS2#harmony",
-    "webpack": "1.12.14"
+    "shelljs": "^0.6.0"
   },
   "scripts": {
     "preuninstall": "node preuninstall.js",
@@ -22,11 +21,6 @@
       {
         "type": "before-prepare",
         "script": "hooks/before-prepare-hook.js",
-        "inject": true
-      },
-      {
-        "type": "after-prepare",
-        "script": "hooks/after-prepare-hook.js",
         "inject": true
       }
     ]
