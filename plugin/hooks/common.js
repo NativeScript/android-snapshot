@@ -96,23 +96,23 @@ function getSnapshotPackageTags(packageName) {
 exports.isPackageInstalled = function(packageInfo) {
     var coreVersion = packageInfo.version.replace(/^latest-/, '');
 
-    var proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + coreVersion, { silent: true });
-    var localPackageInfo = JSON.parse(proc.stdout.toString("utf8"));
-    if (localPackageInfo.dependencies) {
-        return true;
-    }
+    var packageJsonPath = "./node_modules/" + packageInfo.name + "/package.json";
+    if (fs.existsSync(packageJsonPath)) {
+        var packageJsonContent = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+        if (packageJsonContent.version == coreVersion) {
+            return true;
+        }
 
-    var publishedSnapshotPackageVersions = getSnapshotPackageTags(packageInfo.name);
-    var latestTagVersion = publishedSnapshotPackageVersions[packageInfo.version];
+        var publishedSnapshotPackageVersions = getSnapshotPackageTags(packageInfo.name);
+        var latestTagVersion = publishedSnapshotPackageVersions[packageInfo.version];
 
-    if (!latestTagVersion) {
-        return false;
-    }
+        if (!latestTagVersion) {
+            return false;
+        }
 
-    proc = shelljs.exec("npm ls --json " + packageInfo.name + "@" + latestTagVersion, { silent: true });
-    localPackageInfo = JSON.parse(proc.stdout.toString("utf8"));
-    if (localPackageInfo.dependencies) {
-        return true;
+        if (packageJsonContent.version == latestTagVersion) {
+            return true;
+        }
     }
 
     return false;
