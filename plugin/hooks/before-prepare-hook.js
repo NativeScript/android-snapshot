@@ -47,6 +47,8 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             return;
         }
 
+        console.warn("*** nativescript-dev-android-snapshot will be deprecated in the near future in favour of nativescript-dev-webpack plugin. To learn more on how to setup Webpack bundling with V8 heap snapshot generation using nativescript-dev-webpack, read the following article: https://docs.nativescript.org/tooling/bundling-with-webpack  ***");
+
         var currentRuntimeVersion = common.getAndroidRuntimeVersion(projectData, androidPlatformData);
         if (!currentRuntimeVersion) {
             throw new Error("In order to download a compatible V8 snapshot you must have the \"android\" platform installed - to do so please run \"tns platform add android\".");
