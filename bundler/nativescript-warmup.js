@@ -35,7 +35,7 @@ require("ui/button");
 require("ui/content-view");
 require("ui/core/bindable");
 require("ui/core/dependency-observable");
-require("ui/core/properties");
+// require("ui/core/properties");
 require("ui/core/view");
 require("ui/core/view-base");
 require("ui/core/weak-event-listener");
