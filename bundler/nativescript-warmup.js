@@ -73,7 +73,7 @@ require("ui/styling/background");
 require("ui/styling/converters");
 require("ui/styling/css-animation-parser");
 require("ui/styling/font");
-require("ui/styling/style-properties");
+// require("ui/styling/style-properties");
 require("ui/styling/style");
 require("ui/styling/css-selector");
 require("ui/switch");
