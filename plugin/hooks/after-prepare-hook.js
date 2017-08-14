@@ -81,7 +81,7 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         var platformAppDirectory = path.join(platformsData.getPlatformData(platformName).appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-            var bundle = hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.bundle : projectData.$options.bundle;
+            var bundle = common.shouldBundle(projectData, hookArgs);
             if (platformName === "android" && !bundle) {
                 // TODO: Fix this in the CLI if possible
                 if (shelljs.test("-e", path.join(projectData.projectDir, "node_modules", "@angular/core")) &&
