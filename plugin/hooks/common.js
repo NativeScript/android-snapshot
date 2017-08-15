@@ -4,6 +4,10 @@ var shelljs = require("shelljs");
 
 exports.environmentVariableToggleKey = "TNS_ANDROID_SNAPSHOT";
 
+exports.shouldBundle = function shouldBundle(projectData, hookArgs) {
+    return hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.bundle : projectData.$options.bundle;
+}
+
 exports.prepareDeletedModules = function(platformAppDirectory, projectDir) {
     if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) &&
         !shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/tns-core-modules/application"))) {
@@ -19,13 +23,12 @@ exports.isSnapshotEnabled = function(projectData, hookArgs) {
     }
 
     var isReleaseBuild = hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.release : projectData.$options.release;
-    var shouldBundle = hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.bundle : projectData.$options.bundle;
 
     if (process.env[exports.environmentVariableToggleKey] === "0") {
         return false;
     }
 
-    if (shouldBundle) {
+    if (shouldBundle(projectData, hookArgs)) {
         return false;
     }
 

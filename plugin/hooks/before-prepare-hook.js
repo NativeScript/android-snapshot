@@ -86,6 +86,9 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             common.installPublishedPackage(logger, requiredSnapshotPackage);
         }
 
-        restoreSnapshotLibs(projectData, requiredSnapshotPackage.name);
+        var bundle = common.shouldBundle(projectData, hookArgs);
+        if (!bundle) {
+            restoreSnapshotLibs(projectData, requiredSnapshotPackage.name);
+        }
     });
 };
