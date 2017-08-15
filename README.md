@@ -1,4 +1,6 @@
- > V8 heap snapshot generation is now integrated with Webapck bundling being an optional optimization step after code bundling. This will eliminate the need of using this plugin. `nativescript-dev-android-snapshot` plugin will be deprecated in the near future in favor of [nativescript-dev-webpack](https://github.com/NativeScript/nativescript-dev-webpack) . We recommend migrating your apps to use `nativescript-dev-webpack`with enabled snapshot generation. More info on how to setup Webpack bundling in NativeScript you can find [here](https://docs.nativescript.org/tooling/bundling-with-webpack).
+## Deprecated
+
+The plugin is now deprecated. V8 heap snapshot generation is now integrated with Webapck bundling being an optional optimization step after code bundling. We recommend migrating your apps to use `nativescript-dev-webpack`with enabled snapshot generation. More info on how to setup Webpack bundling in NativeScript you can find [here](https://docs.nativescript.org/tooling/bundling-with-webpack).
 
 This repo provides tools to generate and distribute [V8 heap snapshot](https://v8project.blogspot.bg/2015/09/custom-startup-snapshots.html) packages of the [Core NativeScript](https://github.com/NativeScript/NativeScript) / [NativeScript+Angular](https://github.com/NativeScript/nativescript-angular) modules to reduce the startup time of the [NativeScript Android Runtime](https://github.com/NativeScript/android-runtime).
 
