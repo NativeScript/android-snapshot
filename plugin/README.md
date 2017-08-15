@@ -1,3 +1,7 @@
+## Deprecated
+
+The plugin is now deprecated. Please use webpack's `NativeScriptSnapshotPlugin` instead. For more information, check out the [documentation article](http://docs.nativescript.org/best-practices/bundling-with-webpack#v8-heap-snapshot).
+
 ## Installing
 
 To start using the package execute:
