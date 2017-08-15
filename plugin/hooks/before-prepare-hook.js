@@ -40,7 +40,8 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
         var platformAppDirectory = path.join(androidPlatformData.appDestinationDirectoryPath, "app");
 
         if (!common.isSnapshotEnabled(projectData, hookArgs)) {
-            if (platformName === "android") {
+            var bundle = common.shouldBundle(projectData, hookArgs);
+            if (platformName === "android" && !bundle) {
                 cleanSnapshotData(platformAppDirectory, projectData, "tns-core-modules-snapshot");
                 cleanSnapshotData(platformAppDirectory, projectData, "nativescript-angular-snapshot");
             }
@@ -86,9 +87,6 @@ module.exports = function(logger, platformsData, projectData, hookArgs) {
             common.installPublishedPackage(logger, requiredSnapshotPackage);
         }
 
-        var bundle = common.shouldBundle(projectData, hookArgs);
-        if (!bundle) {
-            restoreSnapshotLibs(projectData, requiredSnapshotPackage.name);
-        }
+        restoreSnapshotLibs(projectData, requiredSnapshotPackage.name);
     });
 };
