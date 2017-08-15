@@ -4,9 +4,11 @@ var shelljs = require("shelljs");
 
 exports.environmentVariableToggleKey = "TNS_ANDROID_SNAPSHOT";
 
-exports.shouldBundle = function shouldBundle(projectData, hookArgs) {
+function shouldBundle(projectData, hookArgs) {
     return hookArgs && hookArgs.appFilesUpdaterOptions ? hookArgs.appFilesUpdaterOptions.bundle : projectData.$options.bundle;
 }
+
+exports.shouldBundle = shouldBundle;
 
 exports.prepareDeletedModules = function(platformAppDirectory, projectDir) {
     if (!shelljs.test("-e", path.join(platformAppDirectory, "tns_modules/application")) &&
